@@ -30,7 +30,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.testopmodes;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
@@ -53,7 +53,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 @TeleOp(name = "AprilTagCamCheck")
-@Disabled
 public class AprilTagCamCheck extends LinearOpMode {
 
     private Limelight3A limelight;
@@ -71,7 +70,7 @@ public class AprilTagCamCheck extends LinearOpMode {
     {
         telemetry.setMsTransmissionInterval(11);
 
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight-a");
         limelight.pipelineSwitch(0);
         limelight.start();
 
