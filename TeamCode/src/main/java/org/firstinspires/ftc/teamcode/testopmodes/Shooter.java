@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.testopmodes;
 import com.bylazar.configurables.PanelsConfigurables;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.configurables.annotations.IgnoreConfigurable;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.rowanmcalpin.nextftc.core.Subsystem;
 import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
@@ -22,10 +23,10 @@ public class Shooter extends Subsystem {
     public MotorEx left_motor;
     public MotorEx right_motor;
     public MotorGroup motors;
-    public static int TARGET_RPM = 0;
+    public static int TARGET_RPM = 100;
     public static double VEL_SCALE = 1.;
-    public static int TICKS_PER_REV = 28;
-    public static double PID_P = 0.01;
+    public static int TICKS_PER_REV = 537;
+    public static double PID_P = 0.10;
     public static double PID_I = 0.00;
     public static double PID_D = 0.00;
 
@@ -38,8 +39,16 @@ public class Shooter extends Subsystem {
     public void initialize() {
         left_motor = new MotorEx(left_name);
         right_motor = new MotorEx(right_name);
+        right_motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motors = new MotorGroup(left_motor,right_motor);
         TARGET_RPM = 0;
+    }
+
+    @Override
+    public void periodic() {
+        controller.setKP(PID_P);
+        controller.setKI(PID_I);
+        controller.setKD(PID_D);
     }
 
     public Command stop() {

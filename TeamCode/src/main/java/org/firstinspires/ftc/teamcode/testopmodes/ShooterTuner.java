@@ -10,7 +10,21 @@ public class ShooterTuner extends NextFTCOpMode {
     }
 
     @Override
+    public void onInit() {
+    }
+
+    @Override
     public void onStartButtonPressed() {
         Shooter.INSTANCE.updateConstants().invoke();
+    }
+
+    @Override
+    public void onUpdate() {
+        Shooter.INSTANCE.updateConstants().invoke();
+    }
+
+    @Override
+    public void onStop() {
+        Shooter.INSTANCE.stop().invoke();
     }
 }
