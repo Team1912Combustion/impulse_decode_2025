@@ -20,15 +20,18 @@ public class Shooter extends Subsystem {
     public static final Shooter INSTANCE = new Shooter();
     private Shooter() { }
 
-    public MotorEx left_motor;
-    public MotorEx right_motor;
-    public MotorGroup motors;
+    public static int MAX_RPM = 5000;
+    public static int RPM_INC = 25;
     public static int TARGET_RPM = 100;
     public static double VEL_SCALE = 1.;
-    public static int TICKS_PER_REV = 537;
+    public static int TICKS_PER_REV = 28;
     public static double PID_P = 0.10;
     public static double PID_I = 0.00;
     public static double PID_D = 0.00;
+
+    public MotorEx left_motor;
+    public MotorEx right_motor;
+    public MotorGroup motors;
 
     public PIDFController controller = new PIDFController(PID_P, PID_I, PID_D);
 
@@ -49,6 +52,16 @@ public class Shooter extends Subsystem {
         controller.setKP(PID_P);
         controller.setKI(PID_I);
         controller.setKD(PID_D);
+    }
+
+    double getRPM() {
+       return velToRPM(motors.getVelocity());
+    }
+    double getLeftRPM() {
+        return velToRPM(left_motor.getVelocity());
+    }
+    double getRightRPM() {
+        return velToRPM(right_motor.getVelocity());
     }
 
     public Command stop() {
@@ -87,5 +100,9 @@ public class Shooter extends Subsystem {
     private double rpmToVel(double rpm) {
         return rpm / 60. * TICKS_PER_REV * VEL_SCALE;
     }
+    private double velToRPM(double vel) {
+        return vel * 60. / TICKS_PER_REV;
+    }
+
 }
 
