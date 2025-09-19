@@ -48,8 +48,8 @@ public class PIDShooter extends LinearOpMode {
 
         PIDFCoefficients pidfOrig = left_motor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        telemetry.addData("P,I,D,F (orig)", "%.04f, %.04f, %.04f, %.04f",
-                pidfOrig.p, pidfOrig.i, pidfOrig.d, pidfOrig.f);
+        //telemetry.addData("P,I,D,F (orig)", "%.04f, %.04f, %.04f, %.04f",
+        //        pidfOrig.p, pidfOrig.i, pidfOrig.d, pidfOrig.f);
 
         telemetry.addData("Status", "...initialized");
 
@@ -81,14 +81,15 @@ public class PIDShooter extends LinearOpMode {
 
             double target_vel = TARGET_RPM / 60. * TICKS_PER_REV * VEL_SCALE;
             left_motor.setVelocity(target_vel);
+            right_motor.setVelocity(target_vel);
             double left_vel = left_motor.getVelocity();
             double right_vel = right_motor.getVelocity();
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("P,I,D,F (orig)", "%.04f, %.04f, %.04f, %.04f",
-                    pidfOrig.p, pidfOrig.i, pidfOrig.d, pidfOrig.f);
-            telemetry.addData("P,I,D,F (modified)", "%.04f, %.04f, %.04f, %.04f",
-                    pidfMod.p, pidfMod.i, pidfMod.d, pidfMod.f);
+            //telemetry.addData("P,I,D,F (orig)", "%.04f, %.04f, %.04f, %.04f",
+            //        pidfOrig.p, pidfOrig.i, pidfOrig.d, pidfOrig.f);
+            //telemetry.addData("P,I,D,F (modified)", "%.04f, %.04f, %.04f, %.04f",
+            //        pidfMod.p, pidfMod.i, pidfMod.d, pidfMod.f);
             telemetry.addData("Target", "ticks_per_sec (%.2f)", target_vel);
             telemetry.addData("Measured", "left (%.2f), right (%.2f)", left_vel, right_vel);
             telemetry.update();

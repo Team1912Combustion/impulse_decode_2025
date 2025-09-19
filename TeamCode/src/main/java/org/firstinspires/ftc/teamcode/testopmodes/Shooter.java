@@ -61,7 +61,7 @@ public class Shooter extends Subsystem {
 
     public Command toRPM() {
         return new RunToVelocity(
-                left_motor, // MOTOR TO MOVE
+                motors, // MOTOR TO MOVE
                 rpmToVel(TARGET_RPM), // TARGET POSITION, IN TICKS
                 controller, // CONTROLLER TO IMPLEMENT
                 this); // IMPLEMENTED SUBSYSTEM
@@ -73,12 +73,12 @@ public class Shooter extends Subsystem {
         controller.setKD(PID_D);
         return new SequentialGroup(
             new RunToVelocity(
-                left_motor, // MOTOR TO MOVE
+                motors, // MOTOR TO MOVE
                 rpmToVel(TARGET_RPM), // TARGET POSITION, IN TICKS
                 controller, // CONTROLLER TO IMPLEMENT
                 this),
             new HoldVelocity(
-                left_motor,
+                motors,
                 controller,
                 this)
         );
