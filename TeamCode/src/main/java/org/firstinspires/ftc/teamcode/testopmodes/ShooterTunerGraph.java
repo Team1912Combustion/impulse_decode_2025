@@ -44,14 +44,30 @@ public class ShooterTunerGraph extends NextFTCOpMode {
             }
         }
         Shooter.INSTANCE.updateConstants().invoke();
-        graphManager.addData("RPM",Shooter.INSTANCE.getRPM());
+        graphManager.addData("targetRPM",Shooter.TARGET_RPM);
         graphManager.addData("leftRPM",Shooter.INSTANCE.getLeftRPM());
         graphManager.addData("rightRPM",Shooter.INSTANCE.getRightRPM());
         graphManager.update();
-        panelsTelemetry.addData("RPM",Shooter.INSTANCE.getRPM());
+        panelsTelemetry.addData("TargetRPM", Shooter.TARGET_RPM);
         panelsTelemetry.addData("leftRPM",Shooter.INSTANCE.getLeftRPM());
         panelsTelemetry.addData("rightRPM",Shooter.INSTANCE.getRightRPM());
+        panelsTelemetry.addData("TargetVel", Shooter.INSTANCE.getTargetVel());
+        panelsTelemetry.addData("leftVel",Shooter.INSTANCE.getLeftVel());
+        panelsTelemetry.addData("rightVel",Shooter.INSTANCE.getRightVel());
         panelsTelemetry.update();
+        int i = Shooter.TARGET_RPM;
+        telemetry.addData("TargetRPM", i);
+        double x = Shooter.INSTANCE.getLeftRPM();
+        telemetry.addData("leftRPM",x);
+        x = Shooter.INSTANCE.getRightRPM();
+        telemetry.addData("rightRPM",x);
+        x = Shooter.INSTANCE.getTargetVel();
+        telemetry.addData("TargetVel", x);
+        x = Shooter.INSTANCE.getLeftVel();
+        telemetry.addData("leftVel", x);
+        x = Shooter.INSTANCE.getRightVel();
+        telemetry.addData("rightVel", x);
+        telemetry.update();
     }
 
     @Override
