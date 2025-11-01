@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
@@ -93,8 +92,8 @@ public class ConceptAprilTagOptimizeExposure extends LinearOpMode
 
         // Establish Min and Max Gains and Exposure.  Then set a low exposure with high gain
         getCameraSetting();
-        myExposure = Math.min(5, minExposure);
-        myGain = maxGain;
+        myExposure = Math.min(1, minExposure);
+        myGain = Math.min(125,maxGain);
         setManualExposure(myExposure, myGain);
 
         // Wait for the match to begin.
