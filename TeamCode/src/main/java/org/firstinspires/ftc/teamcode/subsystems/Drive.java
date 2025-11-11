@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.rowanmcalpin.nextftc.core.Subsystem;
+import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.ftc.OpModeData;
+import com.rowanmcalpin.nextftc.hardware.dr;
 
 import org.firstinspires.ftc.teamcode.nextftc.java.Claw;
 
@@ -19,6 +21,8 @@ private Drive() { }
     private DcMotor rightFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
+
+    public DriverControlledCommand driverControlled;
 
     @Override
     public void initialize() {
@@ -33,4 +37,14 @@ private Drive() { }
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
     }
+
+    driverControlled = new PedroDriverControlled();
+            leftFrontDrive,
+            rightFrontDrive,
+            leftBackDrive,
+            rightBackDrive,
+            Gamepads.gamepad1().leftStickY().negate(),
+    Gamepads.gamepad1().leftStickX(),
+    Gamepads.gamepad1().rightStickX()
+);
 }
