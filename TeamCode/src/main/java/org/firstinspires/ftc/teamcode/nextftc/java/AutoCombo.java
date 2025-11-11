@@ -11,13 +11,13 @@ import com.pedropathing.paths.PathPoint;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.BezierCurve;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.rowanmcalpin.nextftc.core.command.Command;
-import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup;
-import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
-import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay;
-import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.utility.AdvancingCommand;
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
+import dev.nextftc.ftc.NextFTCOpMode;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Constants.createFollower;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
 @Autonomous(name = "AutoCombo")
 public class AutoCombo extends NextFTCOpMode {

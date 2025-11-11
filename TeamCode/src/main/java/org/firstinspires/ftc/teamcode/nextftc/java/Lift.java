@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.nextftc.java;
 
-import com.rowanmcalpin.nextftc.core.Subsystem;
-import com.rowanmcalpin.nextftc.core.command.Command;
-import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
-import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController;
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition;
+import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.InstantCommand;
+import dev.nextftc.control.controllers.PIDFController;
+import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.controllable.RunToPosition;
 
 
-public class Lift extends Subsystem {
+public class Lift implements Subsystem {
     // BOILERPLATE
     public static final Lift INSTANCE = new Lift();
     private Lift() { }
