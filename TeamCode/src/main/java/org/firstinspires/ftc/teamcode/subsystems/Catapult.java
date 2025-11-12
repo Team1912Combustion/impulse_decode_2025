@@ -1,46 +1,54 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.rowanmcalpin.nextftc.core.Subsystem;
-import com.rowanmcalpin.nextftc.core.command.Command;
-import com.rowanmcalpin.nextftc.ftc.OpModeData;
-import com.rowanmcalpin.nextftc.ftc.hardware.ServoToPosition;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import dev.nextftc.control.ControlSystem;
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.InstantCommand;
+import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.hardware.controllable.MotorGroup;
+import dev.nextftc.hardware.controllable.RunToPosition;
+import dev.nextftc.hardware.impl.MotorEx;
 
-import org.firstinspires.ftc.teamcode.nextftc.java.Claw;
-
-public class Catapult {
+public class Catapult implements Subsystem {
     public static final Catapult INSTANCE = new Catapult();
     private Catapult() { }
 
     // USER CODE
-    public DcMotor left_motor;
-    public DcMotor right_motor;
+    public MotorEx left_motor;
+    public MotorEx right_motor;
+    public MotorGroup motors;
 
-    private double CATAPULT_UP_MOTOR = -1.0;
-    private double CATAPULT_DOWN_MOTOR = 1.0;
+    public ControlSystem controller = ControlSystem.builder()
+                    .posPid(0.005, 0.0, 0.0)
+                    .elevatorFF(0)
+                    .build();
 
-    public Command open() {
-        return new MotorToPosition(DcMotor, // SERVO TO MOVE
-                0.9, // POSITION TO MOVE TO
-                this); // IMPLEMENTED SUBSYSTEM
-
+    public Command load() {
+        return new RunToPosition (controller, 10.).requires(this);
     }
 
-    public Command close() {
-        return new ServoToPosition(DcMotor, // SERVO TO MOVE
-                0.2, // POSITION TO MOVE TO
-                this); // IMPLEMENTED SUBSYSTEM
-
+    public Command ready() {
+        return new RunToPosition (controller, 20.).requires(this);
     }
 
-    
+    public Command launch() {
+        return new RunToPosition (controller, 0.).requires(this);
+    }
+
+    public Command hold() {
+        return new RunToPosition (controller, motors.getCurrentPosition()).requires(this);
+    }
+
+    @Override
     public void initialize() {
-        left_motor = OpModeData.INSTANCE.getHardwareMap().get(DcMotor.class, "left_catapult_motor");
-        right_motor = OpModeData.INSTANCE.getHardwareMap().get(DcMotor.class, "right_catapult_motor");
-        left_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        right_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-}
+        left_motor = new MotorEx("left_catapult").brakeMode().zeroed();
+        right_motor = new MotorEx("right_catapult").reversed().brakeMode().zeroed();
+        motors = new MotorGroup(left_motor, right_motor);
+    }
+
+    @Override
+    public void periodic() {
+        motors.setPower(controller.calculate(motors.getState()));
+    }
 }
 

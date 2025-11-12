@@ -1,23 +1,19 @@
 package org.firstinspires.ftc.teamcode.subsystems;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.rowanmcalpin.nextftc.core.Subsystem;
-import com.rowanmcalpin.nextftc.core.command.Command;
-import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
-import com.rowanmcalpin.nextftc.ftc.OpModeData;
+import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.InstantCommand;
+import dev.nextftc.hardware.impl.MotorEx;
 
-public class Intake extends Subsystem {
+public class Intake implements Subsystem {
     public static final Intake INSTANCE = new Intake();
     private Intake() { }
 
     private String motor_name = "intake_motor";
-    public DcMotor intake_motor;
+    public MotorEx intake_motor;
 
     private double INTAKE_IN_POWER = 1.0;
     private double INTAKE_OUT_POWER = -0.5;
     private double INTAKE_OFF_POWER = 0.0;
-
-
-
 
     public void intakein(){
         intake_motor.setPower(INTAKE_IN_POWER);
@@ -29,25 +25,18 @@ public class Intake extends Subsystem {
         intake_motor.setPower(INTAKE_OFF_POWER);
     }
 
-
-
     public Command intake_in(){
-        return new InstantCommand(this::intakein);
+        return new InstantCommand(this::intakein).requires(this);
     }
     public Command intake_out(){
-        return new InstantCommand(this::intakeout);
+        return new InstantCommand(this::intakeout).requires(this);
     }
     public Command intake_off(){
-        return new InstantCommand(this::intakeoff);
+        return new InstantCommand(this::intakeoff).requires(this);
     }
-    
-
 
     @Override
     public void initialize() {
-    intake_motor = OpModeData.INSTANCE.getHardwareMap().get(DcMotor.class, motor_name);
+        intake_motor = new MotorEx(motor_name).brakeMode();
     }
-
-
-
 }

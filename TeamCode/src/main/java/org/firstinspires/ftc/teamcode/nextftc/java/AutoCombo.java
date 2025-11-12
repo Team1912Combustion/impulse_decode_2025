@@ -11,15 +11,21 @@ import com.pedropathing.paths.PathPoint;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.BezierCurve;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.utility.AdvancingCommand;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
+import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.ftc.components.BulkReadComponent;
+
 import static org.firstinspires.ftc.teamcode.pedroPathing.Constants.createFollower;
 
 @Autonomous(name = "AutoCombo")
+@Disabled
 public class AutoCombo extends NextFTCOpMode {
     public static double RADIUS = 10;
     private Follower follower;
@@ -28,23 +34,26 @@ public class AutoCombo extends NextFTCOpMode {
     static TelemetryManager telemetryM;
 
     public AutoCombo() {
-        super(Claw.INSTANCE);
+        addComponents(
+                new SubsystemComponent(ExampleLift.INSTANCE, Claw.INSTANCE),
+                BulkReadComponent.INSTANCE
+        );
     }
 
     public Command firstRoutine() {
         return new SequentialGroup(
-                Claw.INSTANCE.open(),
+                Claw.INSTANCE.open,
                 new Delay(0.5),
-                Claw.INSTANCE.close(),
+                Claw.INSTANCE.close,
                 new Delay(0.5),
-                Claw.INSTANCE.open(),
+                Claw.INSTANCE.open,
                 new Delay(0.5),
                 runCircle(),
-                Claw.INSTANCE.close(),
+                Claw.INSTANCE.close,
                 new Delay(0.5),
-                Claw.INSTANCE.open(),
+                Claw.INSTANCE.open,
                 new Delay(0.5),
-                Claw.INSTANCE.close()
+                Claw.INSTANCE.close
         );
     }
 
