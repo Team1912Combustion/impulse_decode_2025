@@ -6,25 +6,33 @@ import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 
-@TeleOp(name = "Run Teleop")
-public class RunTeleop extends NextFTCOpMode {
+@TeleOp(name = "TeleopRed")
+public class RunTeleopRed extends NextFTCOpMode {
 
-    public RunTeleop() {
+    public RunTeleopRed() {
         addComponents(
             new SubsystemComponent(
                     Intake.INSTANCE,
                     Catapult.INSTANCE,
                     Lift.INSTANCE,
-                    Drive.INSTANCE)
+                    Drive.INSTANCE,
+                    Vision.INSTANCE)
             );
     }
 
-    @Override public void onInit() { }
+    public boolean amIBlue() {
+        return false;
+    }
+
+    @Override public void onInit() {
+        Vision.INSTANCE.setAlliance(amIBlue());
+    }
     @Override public void onWaitForStart() { }
 
     @Override public void onStartButtonPressed() {
