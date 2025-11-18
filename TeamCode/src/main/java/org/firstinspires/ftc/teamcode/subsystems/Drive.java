@@ -1,21 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
-import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.Range;
-
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.utility.InstantCommand;
-import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.ftc.ActiveOpMode;
-import dev.nextftc.ftc.Gamepads;
-import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.driving.MecanumDriverControlled;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.AutoDrive;
 
 /*
  * Positive X is forward
@@ -27,61 +17,55 @@ import org.firstinspires.ftc.teamcode.subsystems.AutoDrive;
    double backRightPower    =  x - y + yaw;
 */
 
-public class Drive implements Subsystem {
+public class Drive {
 
-public static final Drive INSTANCE = new Drive();
+    public static final Drive INSTANCE = new Drive();
 
-private Drive() { }
+    private Drive() { }
 
     private AutoDrive autoDrive;
     private Telemetry telemetry;
-    private MotorEx leftFrontDrive = null;
-    private MotorEx rightFrontDrive = null;
-    private MotorEx leftBackDrive = null;
-    private MotorEx rightBackDrive = null;
 
-    public MecanumDriverControlled driverControlled;
+    private DcMotorEx left_front = null;
+    private DcMotorEx right_front = null;
+    private DcMotorEx left_back = null;
+    private DcMotorEx right_back = null;
 
-    @Override
-    public void initialize() {
-        autoDrive = new AutoDrive();
-        autoDrive.init();
-        leftFrontDrive  = new MotorEx("left_front_drive");
-        leftBackDrive   = new MotorEx("left_back_drive");
-        rightFrontDrive = new MotorEx("right_back_drive");
-        rightBackDrive  = new MotorEx("right_back_drive");
+    private String lf_name = "left_front";
+    private String lb_name = "left_back";
+    private String rf_name = "right_back";
+    private String rb_name = "right_back";
 
-        leftFrontDrive.reverse();
-        leftBackDrive.reverse();
+    public void init(HardwareMap hmap) {
+        left_front = hmap.get(DcMotorEx.class,lf_name);
+        right_front = hmap.get(DcMotorEx.class,rf_name);
+        left_back = hmap.get(DcMotorEx.class,lb_name);
+        right_back = hmap.get(DcMotorEx.class,rb_name);
 
-        driverControlled = new MecanumDriverControlled(
-                leftFrontDrive,
-                rightFrontDrive,
-                leftBackDrive,
-                rightBackDrive,
-                Gamepads.gamepad1().leftStickY().negate(),
-                Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX(),
-                driverControlled.getMode()
-        );
+        left_front.setDirection(DcMotorSimple.Direction.REVERSE);
+        left_back.setDirection(DcMotorSimple.Direction.REVERSE);
+        right_front.setDirection(DcMotorSimple.Direction.FORWARD);
+        right_back.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        left_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        right_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        left_back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        right_back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        left_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_front.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        right_front.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        left_back.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        right_back.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-
-
-    public Command stop() {
-        return new InstantCommand(this::setStop);
-    }
-
-    public Command squareToTarget() {
-        return new InstantCommand(autoDrive::runSquareToTarget);
-    }
-
-    public void setStop() {
-        leftFrontDrive.setPower(0.);
-        rightFrontDrive.setPower(0.);
-        leftBackDrive.setPower(0.);
-        rightBackDrive.setPower(0.);
+    public void stop() {
+        left_front.setPower(0.);
+        right_front.setPower(0.);
+        left_back.setPower(0.);
+        right_back.setPower(0.);
     }
 
     public void moveRobot(double fwd, double strafe, double rot) {
@@ -90,10 +74,10 @@ private Drive() { }
         double frontRightPower = (fwd + strafe + rot) / denominator;
         double backLeftPower = (fwd + strafe - rot) / denominator;
         double backRightPower = (fwd - strafe + rot) / denominator;
-        leftFrontDrive.setPower(frontLeftPower);
-        rightFrontDrive.setPower(frontRightPower);
-        leftBackDrive.setPower(backLeftPower);
-        rightBackDrive.setPower(backRightPower);
+        left_front.setPower(frontLeftPower);
+        right_front.setPower(frontRightPower);
+        left_back.setPower(backLeftPower);
+        right_back.setPower(backRightPower);
     }
 
 }

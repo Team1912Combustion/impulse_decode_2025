@@ -1,51 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-
-import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelGroup;
-import dev.nextftc.ftc.NextFTCOpMode;
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.groups.SequentialGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.commands.Paths;
 
 @Autonomous(name = "RedGoal")
-public class RedGoal extends NextFTCOpMode {
+public class RedGoal {
 
-    public RedGoal() {
-        addComponents(/* vararg components */);
-    }
+    private boolean iAmBlue() { return false;}
 
-    private Command autonomousRoutine() {
-        return new SequentialGroup(
-                Catapult.INSTANCE.launch(),
-                new Delay(0.5),
-                new ParallelGroup(
-                        Catapult.INSTANCE.load(),
-                        Intake.INSTANCE.intake_in()
-                ),
-                new Delay(0.5),
-                new ParallelGroup(
-                        Catapult.INSTANCE.hold(),
-                        Intake.INSTANCE.intake_off()
-                )
-        );
-    }
+    double driveSpeed = 0.25;
+    double slowSpeed = 0.15;
+    double minDriveSpeed = 0.05;
+    double turnSpeed = 0.20;
+    double holdTime = 0.5;
 
-    @Override
-    public void onStartButtonPressed() {
-        autonomousRoutine().schedule();
-    }
-    @Override public void onInit() { }
-    @Override public void onWaitForStart() { }
-    @Override public void onUpdate() { }
-    @Override public void onStop() { }
-
-    public boolean amIBlue() {
-        return false;
-    }
 }

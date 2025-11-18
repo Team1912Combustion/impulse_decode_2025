@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
-import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -13,12 +15,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.utility.LambdaCommand;
-import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.ftc.ActiveOpMode;
-
-public class Vision implements Subsystem {
+public class Vision {
     public static final Vision INSTANCE = new Vision();
     private Vision() { }
     private static final boolean USE_WEBCAM = true;
@@ -27,46 +24,65 @@ public class Vision implements Subsystem {
     private VisionPortal visionPortal;
 
     private boolean I_AM_BLUE;
-    private int MY_TARGET_ID =  0;
     private int BLUE_TAG_ID =  20;
     private int GPP_TAG_ID =  21;
     private int PGP_TAG_ID =  22;
     private int PPG_TAG_ID =  23;
     private int RED_TAG_ID =  24;
 
-    public TargetPose targetPose;
-    public int target_id = 0;
-
-    public class TargetPose {
+    public static class TargetPose {
         AprilTagPoseFtc pose;
         int id;
     }
 
-    private List<Integer> ob_arr = new ArrayList<Integer>(3);
-    private Timer m_timer;
+    public TargetPose targetPose;
+    public int target_id = 0;
 
-    @Override
-    public void initialize() {
-        m_timer = new Timer();
+    public DcMotor ledBlue = null;
+    public DcMotor ledRed  = null;
+
+    private List<Integer> ob_arr = new ArrayList<Integer>(3);
+
+    public void init(HardwareMap hMap) {
         targetPose = new TargetPose();
         targetPose.id = 0;
 
-        initAprilTag();
+        initAprilTag(hMap);
 
         // initialize ob_arr
         ob_arr.add(GPP_TAG_ID);
         ob_arr.add(PGP_TAG_ID);
         ob_arr.add(PPG_TAG_ID);
+
+        ledRed =  hMap.get(DcMotor.class, "ledRed");
+        ledBlue =  hMap.get(DcMotor.class, "ledBlue");
+        ledRed.setPower(0.);
+        ledBlue.setPower(0.);
     }
 
     public void setAlliance(boolean iAmBlue) {
         I_AM_BLUE = iAmBlue;
+        ledOn();
     }
 
-    private void initAprilTag() {
+    public void ledOff() {
+        ledBlue.setPower(0.);
+        ledRed.setPower(0.);
+    }
+
+    public void ledOn() {
+        if (I_AM_BLUE) {
+            ledBlue.setPower(1.);
+        }
+        else {
+            ledRed.setPower(1.);
+        }
+    }
+
+    private void initAprilTag(HardwareMap hMap) {
         aprilTag = new AprilTagProcessor.Builder().build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
-        builder.setCamera(ActiveOpMode.hardwareMap().get(WebcamName.class, "Webcam 1"));
+        builder.setCamera(hMap.get(WebcamName.class, "Webcam 1"));
         builder.addProcessor(aprilTag);
         visionPortal = builder.build();
     }
@@ -75,45 +91,11 @@ public class Vision implements Subsystem {
         visionPortal.close();
     }
 
-    public Command oldWaitForTarget(double time) {
-        return new LambdaCommand()
-                .setStart(() -> {
-                    m_timer.resetTimer();
-                })
-                .setUpdate(() -> {
-                    targetPose = getTargetPose();
-                    target_id = targetPose.id;
-                })
-                .setStop(interrupted -> {
-                    target_id = 0;
-                })
-                .setIsDone(() -> target_id != 0 || m_timer.getElapsedTimeSeconds() > time)
-                .requires(/* subsystems the command implements */)
-                .setInterruptible(true)
-                .named("waitForTarget");
-    }
-
-    public Command waitForTarget(double time) {
-        return new LambdaCommand()
-                .setStart(() -> {
-                    target_id = myTimeWaitForTarget(time);
-                })
-                .setUpdate(() -> {
-                })
-                .setStop(interrupted -> {
-                    target_id = 0;
-                })
-                .setIsDone(() -> target_id != 0 || m_timer.getElapsedTimeSeconds() > time)
-                .requires(/* subsystems the command implements */)
-                .setInterruptible(true)
-                .named("waitForTarget");
-    }
-
     public int myTimeWaitForTarget(double time) {
         int target_id = 0;
-        Timer timer = new Timer();
-        timer.resetTimer();
-        while (target_id == 0 & timer.getElapsedTimeSeconds() < time) {
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while (target_id == 0 & timer.seconds() < time) {
             targetPose = getTargetPose();
             target_id = targetPose.id;
         }
@@ -122,8 +104,6 @@ public class Vision implements Subsystem {
 
     public int myWaitForTarget() {
         int target_id = 0;
-        Timer timer = new Timer();
-        timer.resetTimer();
         while (target_id == 0) {
             targetPose = getTargetPose();
             target_id = targetPose.id;

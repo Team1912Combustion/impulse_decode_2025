@@ -21,10 +21,8 @@
 */
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.ftc.ActiveOpMode;
-
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -32,7 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.utils.Pose2d;
 import org.firstinspires.ftc.teamcode.utils.Rotation2d;
 
-public class PinPoint implements Subsystem {
+public class PinPoint {
     // Create an instance of the sensor
     public static final PinPoint INSTANCE = new PinPoint();
 
@@ -40,10 +38,9 @@ public class PinPoint implements Subsystem {
 
     GoBildaPinpointDriver pinpoint;
 
-    @Override
-    public void initialize() {
+    public void init(HardwareMap hMap) {
         // Get a reference to the sensor
-        pinpoint = ActiveOpMode.hardwareMap().get(GoBildaPinpointDriver.class, "pinpoint");
+        pinpoint = hMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         // Configure the sensor
         configurePinpoint();

@@ -1,54 +1,91 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import dev.nextftc.control.ControlSystem;
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.utility.InstantCommand;
-import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.hardware.controllable.MotorGroup;
-import dev.nextftc.hardware.controllable.RunToPosition;
-import dev.nextftc.hardware.impl.MotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Catapult implements Subsystem {
+public class Catapult {
     public static final Catapult INSTANCE = new Catapult();
     private Catapult() { }
 
-    // USER CODE
-    public MotorEx left_motor;
-    public MotorEx right_motor;
-    public MotorGroup motors;
+    private ElapsedTime timer = null;
 
-    public ControlSystem controller = ControlSystem.builder()
-                    .posPid(0.005, 0.0, 0.0)
-                    .elevatorFF(0)
-                    .build();
+    private DcMotorEx left_motor = null;
+    private DcMotorEx right_motor = null;
 
-    public Command load() {
-        return new RunToPosition (controller, 10.).requires(this);
+    private String left_name = "left_catapult";
+    private String right_name = "right_catapult";
+
+    private static int LOAD_POSITION = 10;
+    private static int READY_POSITION = 20;
+    private static int LAUNCH_POSITION = 0;
+    private static double POWER_TO_LOAD = -1.;
+    private static double POWER_TO_READY = -1.;
+    private static double POWER_TO_LAUNCH = 1.;
+
+    public void load() {
+        left_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_motor.setTargetPosition(LOAD_POSITION);
+        right_motor.setTargetPosition(LOAD_POSITION);
+        timer.reset();
+        left_motor.setPower(POWER_TO_LOAD);
+        right_motor.setPower(POWER_TO_LOAD);
     }
 
-    public Command ready() {
-        return new RunToPosition (controller, 20.).requires(this);
+    public void hold() {
+        int hold_position = left_motor.getCurrentPosition();
+        left_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_motor.setTargetPosition(hold_position);
+        right_motor.setTargetPosition(hold_position);
+        left_motor.setPower(POWER_TO_READY);
+        right_motor.setPower(POWER_TO_READY);
     }
 
-    public Command launch() {
-        return new RunToPosition (controller, 0.).requires(this);
+    public void launch() {
+        left_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_motor.setTargetPosition(LAUNCH_POSITION);
+        right_motor.setTargetPosition(LAUNCH_POSITION);
+        timer.reset();
+        while (timer.milliseconds() < 100) {
+            left_motor.setPower(POWER_TO_LAUNCH);
+            right_motor.setPower(POWER_TO_LAUNCH);
+        }
+        rest();
     }
 
-    public Command hold() {
-        return new RunToPosition (controller, motors.getCurrentPosition()).requires(this);
+    public int getPosition() {
+        return left_motor.getCurrentPosition();
     }
 
-    @Override
-    public void initialize() {
-        left_motor = new MotorEx("left_catapult").brakeMode().zeroed();
-        right_motor = new MotorEx("right_catapult").reversed().brakeMode().zeroed();
-        motors = new MotorGroup(left_motor, right_motor);
+    public void rest() {
+        left_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_motor.setPower(0.);
+        right_motor.setPower(0.);
     }
 
-    @Override
-    public void periodic() {
-        motors.setPower(controller.calculate(motors.getState()));
+    public void init(HardwareMap hmap) {
+        left_motor = hmap.get(DcMotorEx.class,left_name);
+        right_motor = hmap.get(DcMotorEx.class,left_name);
+        left_motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        right_motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        left_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        right_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        left_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_motor.setTargetPosition(0);
+        right_motor.setTargetPosition(0);
+        timer = new ElapsedTime();
+        timer.reset();
     }
+
 }
 

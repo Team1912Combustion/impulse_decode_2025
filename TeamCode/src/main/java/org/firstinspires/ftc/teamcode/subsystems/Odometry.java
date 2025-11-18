@@ -1,17 +1,13 @@
 
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.utils.Pose2d;
 import org.firstinspires.ftc.teamcode.utils.Rotation2d;
 
-import dev.nextftc.core.subsystems.Subsystem;
-
-public class Odometry implements Subsystem {
+public class Odometry {
     public static final Odometry INSTANCE = new Odometry();
 
     PinPoint pinpoint;
@@ -34,36 +30,6 @@ public class Odometry implements Subsystem {
 
     public double getRot() {
         return fixRot(robot_heading * Math.PI / 180.);
-    }
-
-    @Override
-    public void initialize() {
-        pinpoint = PinPoint.INSTANCE;
-    }
-
-    public void setup(boolean iAmBlue, boolean iAmAtGoal) {
-        if (iAmAtGoal) {
-            if (iAmBlue) {
-                robot_y = 0;
-                robot_x = 0;
-                robot_heading = 0;
-            } else {
-                robot_y = 0;
-                robot_x = 0;
-                robot_heading = 0;
-            }
-        } else {
-            if (iAmBlue) {
-                robot_y = 0;
-                robot_x = 0;
-                robot_heading = 0;
-            } else {
-                robot_y = 0;
-                robot_x = 0;
-                robot_heading = 0;
-            }
-        }
-        set(robot_x, robot_y, robot_heading);
     }
 
     public Pose2d getPose2d() {
@@ -135,6 +101,37 @@ public class Odometry implements Subsystem {
             fixedRot += 2. * Math.PI;
         }
         return fixedRot;
+    }
+
+    public void init(boolean iAmBlue, boolean iAmAtGoal) {
+        pinpoint = PinPoint.INSTANCE;
+        if (iAmAtGoal) {
+            if (iAmBlue) {
+                robot_y = 0;
+                robot_x = 0;
+                robot_heading = 0;
+            } else {
+                robot_y = 0;
+                robot_x = 0;
+                robot_heading = 0;
+            }
+        } else {
+            if (iAmBlue) {
+                robot_y = 0;
+                robot_x = 0;
+                robot_heading = 0;
+            } else {
+                robot_y = 0;
+                robot_x = 0;
+                robot_heading = 0;
+            }
+        }
+        set(robot_x, robot_y, robot_heading);
+    }
+
+    public void teleinit() {
+        pinpoint = PinPoint.INSTANCE;
+        update();
     }
 
 }

@@ -1,43 +1,48 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import dev.nextftc.control.ControlSystem;
-import dev.nextftc.core.commands.utility.InstantCommand;
-import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.hardware.controllable.RunToPosition;
-import dev.nextftc.hardware.impl.MotorEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Lift implements Subsystem {
+public class Lift {
     public static final Lift INSTANCE = new Lift();
     private Lift() {  }
 
-    public MotorEx lift_motor;
-    private String motor_name = "lift";
+    private DcMotorEx lift_motor;
+    private static final String motor_name = "lift";
 
-    public ControlSystem controller =
-            ControlSystem.builder().posPid(0.005, 0.0, 0.0).build();
+    private static final int STOW_POSITION = 0;
+    private static final int TIP_POSITION = 10;
+    private static final double POWER_TO_STOW = -1.;
+    private static final double POWER_TO_TIP = 1.;
 
-    public Command push() {
-        return new RunToPosition(controller, 10.);
+    public void stow() {
+        lift_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift_motor.setTargetPosition(STOW_POSITION);
+        lift_motor.setPower(POWER_TO_STOW);
     }
 
-    public Command pull() {
-        return new RunToPosition(controller, 0.);
+    public void hold() {
+        lift_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift_motor.setPower(0.);
     }
 
-    public Command hold() {
-        return new RunToPosition (controller, lift_motor.getCurrentPosition()).requires(this);
+    public void tip() {
+        lift_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift_motor.setTargetPosition(TIP_POSITION);
+        lift_motor.setPower(POWER_TO_TIP);
     }
 
-    @Override
-    public void initialize() {
-        lift_motor = new MotorEx(motor_name).brakeMode();
+    public int getPosition() {
+        return lift_motor.getCurrentPosition();
     }
 
-    @Override
-    public void periodic() {
-        lift_motor.setPower(controller.calculate(lift_motor.getState()));
+    public void init(HardwareMap hMap) {
+        lift_motor = hMap.get(DcMotorEx.class, motor_name);
+        lift_motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        lift_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift_motor.setTargetPosition(0);
     }
-
-
 }
