@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.subsystems.ActiveOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -29,6 +30,7 @@ public class AutoSelect extends LinearOpMode
 
         telemetry.addData(">", "initializing hardware.");
         telemetry.update();
+        ActiveOpMode.INSTANCE.init(this);
         AutoSettings.INSTANCE.readAutoConfig();
         Drive.INSTANCE.init(hardwareMap);
         Vision.INSTANCE.init(hardwareMap);

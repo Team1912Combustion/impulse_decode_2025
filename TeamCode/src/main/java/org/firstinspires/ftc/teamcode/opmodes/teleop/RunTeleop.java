@@ -35,8 +35,8 @@ public class RunTeleop extends OpMode {
         Intake.INSTANCE.init(hardwareMap);
         PinPoint.INSTANCE.init(hardwareMap);
         Odometry.INSTANCE.teleinit();
-        telemetry.update();
         telemetry.addData(">", "Initialization complete.");
+        telemetry.update();
     }
 
     /*
@@ -97,48 +97,46 @@ public class RunTeleop extends OpMode {
         // INTAKE CODE
         if (intakeInButton) {
             Intake.INSTANCE.intakein();
+            telemetry.addLine("Intake: In");
         } else if (intakeOutButton) {
             Intake.INSTANCE.intakeout();
+            telemetry.addLine("Intake: Out");
         } else {
             Intake.INSTANCE.intakeoff();
-        }
-
-        // LIFT CODE
-        if (liftOutButton) {
-            Lift.INSTANCE.tip();
-        } else if (liftUpButton) {
-            Lift.INSTANCE.stow();
-        } else {
-            Lift.INSTANCE.hold();
-        }
-
-        // lift uses button a to tip and b to stow
-        if(gamepad1.a && !lift_press){
-            telemetry.addLine("Lifting");
-            Lift.INSTANCE.tip();
-            lift_press = true;
-        } else if(lift_press && !gamepad1.a) {
-            lift_press = false;
-            telemetry.addLine("Lift off");
+            telemetry.addLine("Intake: Off");
         }
 
         if (catapultLaunchButton) {
             Catapult.INSTANCE.launch();
+            telemetry.addLine("Catapult: Launch");
         } else if (catapultLoadButton) {
             Catapult.INSTANCE.load();
+            telemetry.addLine("Catapult: Load");
         } else {
             Catapult.INSTANCE.hold();
+            telemetry.addLine("Catapult: Hold");
         }
+        telemetry.addData("Catapult: position:",Catapult.INSTANCE.getPosition());
 
-        telemetry.addData("Catapult Position:",Catapult.INSTANCE.getPosition());
-        telemetry.addData("Lift Position:",Lift.INSTANCE.getPosition());
+        // LIFT CODE
+        if (liftOutButton) {
+            Lift.INSTANCE.tip();
+            telemetry.addLine("Lift: Tip");
+        } else if (liftUpButton) {
+            Lift.INSTANCE.stow();
+            telemetry.addLine("Lift: Stow");
+        } else {
+            Lift.INSTANCE.hold();
+            telemetry.addLine("Lift: Off");
+        }
+        telemetry.addData("Lift: position:",Lift.INSTANCE.getPosition());
 
         double drive = -1. * gamepad1.left_stick_y;
         double strafe = -1. * gamepad1.left_stick_x;
         double turn = -1. * gamepad1.right_stick_x;
-
-        telemetry.addData("Manual","Drive %5.2f / %5.2f / %5.2f",drive,strafe,turn);
-        telemetry.update();
         Drive.INSTANCE.moveRobot(drive, strafe, turn);
+
+        telemetry.addData("Drive: ","powers: %5.2f / %5.2f / %5.2f",drive,strafe,turn);
+        telemetry.update();
     }
 }
