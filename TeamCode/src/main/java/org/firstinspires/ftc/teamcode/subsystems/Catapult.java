@@ -39,6 +39,10 @@ public class Catapult implements Subsystem {
         return new RunToPosition (controller, motors.getCurrentPosition()).requires(this);
     }
 
+    public double getPosition() {
+        return left_motor.getCurrentPosition();
+    }
+
     @Override
     public void initialize() {
         left_motor = new MotorEx("left_catapult").brakeMode().zeroed();

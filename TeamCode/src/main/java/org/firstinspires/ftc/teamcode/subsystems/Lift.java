@@ -29,6 +29,10 @@ public class Lift implements Subsystem {
         return new RunToPosition (controller, lift_motor.getCurrentPosition()).requires(this);
     }
 
+    public double getPosition() {
+        return lift_motor.getCurrentPosition();
+    }
+
     @Override
     public void initialize() {
         lift_motor = new MotorEx(motor_name).brakeMode();
