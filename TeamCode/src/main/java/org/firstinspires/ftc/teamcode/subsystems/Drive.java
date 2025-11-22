@@ -33,7 +33,7 @@ public class Drive {
 
     private String lf_name = "left_front";
     private String lb_name = "left_back";
-    private String rf_name = "right_back";
+    private String rf_name = "right_front";
     private String rb_name = "right_back";
 
     public void init(HardwareMap hmap) {

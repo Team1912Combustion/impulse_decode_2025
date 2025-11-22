@@ -82,7 +82,7 @@ public class Vision {
     private void initAprilTag(HardwareMap hMap) {
         aprilTag = new AprilTagProcessor.Builder().build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
-        builder.setCamera(hMap.get(WebcamName.class, "Webcam 1"));
+        builder.setCamera(hMap.get(WebcamName.class, "webcam"));
         builder.addProcessor(aprilTag);
         visionPortal = builder.build();
     }

@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 @Autonomous(name = "RedGoal")
-public class RedGoal {
+public class RedGoal extends OpMode {
 
     private boolean iAmBlue() { return false;}
 
@@ -15,5 +16,9 @@ public class RedGoal {
     double minDriveSpeed = 0.05;
     double turnSpeed = 0.20;
     double holdTime = 0.5;
+
+    public void init() {}
+    public void loop() {}
+
 
 }
