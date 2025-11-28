@@ -116,7 +116,8 @@ public class RunTeleop extends OpMode {
             Catapult.INSTANCE.hold();
             telemetry.addLine("Catapult: Hold");
         }
-        telemetry.addData("Catapult: position:",Catapult.INSTANCE.getPosition());
+        telemetry.addData("Catapult: Lposition:",Catapult.INSTANCE.getLPosition());
+        telemetry.addData("Catapult: Rosition:",Catapult.INSTANCE.getRPosition());
 
         // LIFT CODE
         if (liftOutButton) {

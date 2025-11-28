@@ -53,7 +53,10 @@ public class TestCatapult extends OpMode {
             org.firstinspires.ftc.teamcode.subsystems.Catapult.INSTANCE.hold();
             telemetry.addLine("Catapult: Hold");
         }
-        telemetry.addData("Catapult: position:", org.firstinspires.ftc.teamcode.subsystems.Catapult.INSTANCE.getPosition());
+        telemetry.addData("Catapult: L position:", org.firstinspires.ftc.teamcode.subsystems.Catapult.INSTANCE.getLPosition());
+        telemetry.addData("Catapult: R position:", org.firstinspires.ftc.teamcode.subsystems.Catapult.INSTANCE.getRPosition());
+        telemetry.addData("Catapult: L power:", org.firstinspires.ftc.teamcode.subsystems.Catapult.INSTANCE.getLPower());
+        telemetry.addData("Catapult: R power:", org.firstinspires.ftc.teamcode.subsystems.Catapult.INSTANCE.getRPower());
 
         telemetry.update();
     }

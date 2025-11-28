@@ -11,79 +11,55 @@ public class Catapult {
     public static final Catapult INSTANCE = new Catapult();
     private Catapult() { }
 
-    private ElapsedTime timer = null;
-
     private DcMotorEx left_motor = null;
     private DcMotorEx right_motor = null;
 
     private String left_name = "left_catapult";
     private String right_name = "right_catapult";
 
-    private static int LOAD_POSITION = -130;
-    private static int LAUNCH_POSITION = 0;
     private static double POWER_TO_LOAD = -1.;
-    private static double POWER_TO_READY = -1.;
+    private static double POWER_TO_HOLD = -0.2;
     private static double POWER_TO_LAUNCH = 1.;
 
     public void load() {
-        left_motor.setTargetPosition(LOAD_POSITION);
-        right_motor.setTargetPosition(LOAD_POSITION);
-        left_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        timer.reset();
         left_motor.setPower(POWER_TO_LOAD);
         right_motor.setPower(POWER_TO_LOAD);
     }
 
     public void hold() {
-        int hold_position = left_motor.getCurrentPosition();
-        left_motor.setTargetPosition(hold_position);
-        right_motor.setTargetPosition(hold_position);
-        left_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_motor.setPower(POWER_TO_READY);
-        right_motor.setPower(POWER_TO_READY);
+        left_motor.setPower(POWER_TO_HOLD);
+        right_motor.setPower(POWER_TO_HOLD);
     }
 
     public void launch() {
-        left_motor.setTargetPosition(LAUNCH_POSITION);
-        right_motor.setTargetPosition(LAUNCH_POSITION);
-        left_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        timer.reset();
-        while (timer.milliseconds() < 1000) {
-            left_motor.setPower(POWER_TO_LAUNCH);
-            right_motor.setPower(POWER_TO_LAUNCH);
-        }
-        rest();
+        left_motor.setPower(POWER_TO_LAUNCH);
+        right_motor.setPower(POWER_TO_LAUNCH);
     }
 
-    public int getPosition() {
+    public int getLPosition() {
         return left_motor.getCurrentPosition();
     }
-
-    public void rest() {
-        left_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_motor.setPower(0.);
-        right_motor.setPower(0.);
+    public int getRPosition() {
+        return right_motor.getCurrentPosition();
+    }
+    public double getLPower() {
+        return left_motor.getPower();
+    }
+    public double getRPower() {
+        return right_motor.getPower();
     }
 
     public void init(HardwareMap hmap) {
         left_motor = hmap.get(DcMotorEx.class,left_name);
-        right_motor = hmap.get(DcMotorEx.class,left_name);
+        right_motor = hmap.get(DcMotorEx.class,right_name);
         left_motor.setDirection(DcMotorSimple.Direction.FORWARD);
         right_motor.setDirection(DcMotorSimple.Direction.REVERSE);
         left_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         left_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_motor.setTargetPosition(0);
-        right_motor.setTargetPosition(0);
-        left_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        timer = new ElapsedTime();
-        timer.reset();
+        left_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 }
