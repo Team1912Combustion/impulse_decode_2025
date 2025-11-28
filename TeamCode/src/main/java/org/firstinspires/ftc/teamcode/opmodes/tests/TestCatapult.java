@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 
-@TeleOp(group = "Test", name = "Catapult")
+@TeleOp(group = "Test", name = "TestCatapult")
 public class TestCatapult extends OpMode {
 
     @Override
@@ -44,16 +44,19 @@ public class TestCatapult extends OpMode {
         }
 
         if (catapultLaunchButton) {
-            org.firstinspires.ftc.teamcode.subsystems.Catapult.INSTANCE.launch();
+            Catapult.INSTANCE.launch();
             telemetry.addLine("Catapult: Launch");
         } else if (catapultLoadButton) {
-            org.firstinspires.ftc.teamcode.subsystems.Catapult.INSTANCE.load();
+            Catapult.INSTANCE.load();
             telemetry.addLine("Catapult: Load");
         } else {
-            org.firstinspires.ftc.teamcode.subsystems.Catapult.INSTANCE.hold();
+            Catapult.INSTANCE.hold();
             telemetry.addLine("Catapult: Hold");
         }
-        telemetry.addData("Catapult: position:", org.firstinspires.ftc.teamcode.subsystems.Catapult.INSTANCE.getPosition());
+        telemetry.addData("Catapult: position:", Catapult.INSTANCE.getLeftPosition());
+        telemetry.addData("Catapult: position:", Catapult.INSTANCE.getRightPosition());
+        telemetry.addData("Catapult: lpower:", Catapult.INSTANCE.left_motor.getPower());
+        telemetry.addData("Catapult: rpower:", Catapult.INSTANCE.right_motor.getPower());
 
         telemetry.update();
     }
