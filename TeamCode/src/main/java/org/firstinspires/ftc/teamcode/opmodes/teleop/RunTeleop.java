@@ -67,29 +67,27 @@ public class RunTeleop extends OpMode {
                 endGameWarning = ! endGameWarning;
             }
             if (Math.round(blinkTimer.seconds()) % 2 == 1) {
-                Vision.INSTANCE.ledOn();
-            } else {
-                Vision.INSTANCE.ledOff();
+                gamepad1.rumble(250);
             }
-        } else {
-            Vision.INSTANCE.ledOn();
         }
 
-        boolean intakeInButton = gamepad1.left_trigger > 0.2;
-        boolean intakeOutButton = gamepad1.left_bumper;
+       // boolean intakeInButton = gamepad1.left_trigger > 0.2;
+        //boolean intakeOutButton = gamepad1.left_bumper;
+        boolean intakeInButton = gamepad1.a;
+        boolean intakeOutButton = gamepad1.b;
         if (intakeOutButton && intakeInButton) {
             intakeInButton = false;
             intakeOutButton = false;
         }
 
-        boolean liftOutButton = gamepad1.a;
-        boolean liftUpButton = gamepad1.b;
+        boolean liftOutButton = gamepad1.dpad_up;
+        boolean liftUpButton = gamepad1.dpad_down;
         if (liftOutButton && liftUpButton) {
             liftOutButton = false;
         }
 
-        boolean catapultLaunchButton = gamepad1.right_bumper;
-        boolean catapultLoadButton = gamepad1.right_trigger > 0.2;
+        boolean catapultLaunchButton = gamepad1.right_trigger > 0.2;
+        boolean catapultLoadButton = gamepad1.right_bumper;
         if (catapultLaunchButton && catapultLoadButton) {
             catapultLaunchButton = false;
         }
@@ -132,12 +130,16 @@ public class RunTeleop extends OpMode {
         }
         telemetry.addData("Lift: position:",Lift.INSTANCE.getPosition());
 
-        double drive = -1. * gamepad1.left_stick_y;
-        double strafe = -1. * gamepad1.left_stick_x;
-        double turn = -1. * gamepad1.right_stick_x;
+        double drive = -1. * squareInput(gamepad1.left_stick_y);
+        double strafe = -1. * squareInput(gamepad1.left_stick_x);
+        double turn = -1. * squareInput(gamepad1.right_stick_x);
         Drive.INSTANCE.moveRobot(drive, strafe, turn);
 
         telemetry.addData("Drive: ","powers: %5.2f / %5.2f / %5.2f",drive,strafe,turn);
         telemetry.update();
+    }
+
+    public double squareInput(double stick) {
+        return stick*stick*stick;
     }
 }

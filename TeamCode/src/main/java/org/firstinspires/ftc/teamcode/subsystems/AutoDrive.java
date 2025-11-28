@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utils.Pose2d;
 import org.firstinspires.ftc.teamcode.utils.Rotation2d;
 import org.firstinspires.ftc.teamcode.utils.Transform2d;
@@ -50,6 +51,7 @@ public class AutoDrive {
         driveSys = Drive.INSTANCE;
         driveSys.init(hMap);
         driveSys.stop();
+        vision.init(hMap);
 
         cur_pose = odometry.getPose2d();
         target_pose = cur_pose;
@@ -94,14 +96,22 @@ public class AutoDrive {
                 drive = driveSpeed * trans_error.getX() / dist_error;
                 strafe = driveSpeed * trans_error.getY() / dist_error;
 
-                driveSys.moveRobot(drive, strafe, turn);
+                double theta = Math.atan2(drive, strafe);
+                double r = Math.hypot(strafe, drive);
+                // Second, rotate angle by the angle the robot is pointing
+                theta = AngleUnit.normalizeRadians(theta - heading);
+                // Third, convert back to cartesian
+                double new_drive = r * Math.sin(theta);
+                double new_strafe = r * Math.cos(theta);
+
+                driveSys.moveRobot(new_drive, new_strafe, turn);
 
                 telemetry.addData("Motion", "Drive ");
-                telemetry.addData("Target Pose X:Y:R",  "%7d:%7d:%7d",
+                telemetry.addData("Target Pose X:Y:R",  "%7f:%7f:%7f",
                         target_pose.getX(), target_pose.getY(), target_pose.getHeading());
-                telemetry.addData("Actual Pose X:Y:R",  "%7d:%7d",
+                telemetry.addData("Actual Pose X:Y:R",  "%7f:%7f:%7f",
                         odometry.getX(), odometry.getY(),odometry.getHeading());
-                telemetry.addData("Power       X:Y:R",  "%7d:%7d",
+                telemetry.addData("Power       X:Y:R",  "%7f:%7f%7f",
                         drive, strafe, turn);
                 telemetry.update();
             }
@@ -254,9 +264,9 @@ public class AutoDrive {
                     targetHeading, odometry.getHeading());
         } else {
             telemetry.addData("Motion", "Drive ");
-            telemetry.addData("Target Pose X:Y:H",  "%7d:%7d:%7d",
+            telemetry.addData("Target Pose X:Y:H",  "%7f:%7f:%7f",
                     target_pose.getX(), target_pose.getY(), target_pose.getHeading());
-            telemetry.addData("Actual Pose X:Y:H",  "%7d:%7d",
+            telemetry.addData("Actual Pose X:Y:H",  "%7f:%7f:%7f",
                     odometry.getX(), odometry.getY(),odometry.getHeading());
         }
         telemetry.addData("Error  : Steer Pwr",  "%5.1f : %5.1f", headingError, turnSpeed);

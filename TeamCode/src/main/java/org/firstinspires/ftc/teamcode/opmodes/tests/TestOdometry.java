@@ -40,6 +40,7 @@ public class TestOdometry extends OpMode {
     @Override
     public void loop() {
 
+        Odometry.INSTANCE.update();
         Pose2d pose = Odometry.INSTANCE.getPose2d();
         double x = pose.getX();
         double y = pose.getY();

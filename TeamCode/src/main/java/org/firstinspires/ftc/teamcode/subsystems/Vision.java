@@ -54,29 +54,29 @@ public class Vision {
         ob_arr.add(PGP_TAG_ID);
         ob_arr.add(PPG_TAG_ID);
 
-        ledRed =  hMap.get(DcMotor.class, "ledRed");
-        ledBlue =  hMap.get(DcMotor.class, "ledBlue");
-        ledRed.setPower(0.);
-        ledBlue.setPower(0.);
+        //ledRed =  hMap.get(DcMotor.class, "ledRed");
+        //ledBlue =  hMap.get(DcMotor.class, "ledBlue");
+        //ledRed.setPower(0.);
+        //ledBlue.setPower(0.);
     }
 
     public void setAlliance(boolean iAmBlue) {
         I_AM_BLUE = iAmBlue;
-        ledOn();
+        //ledOn();
     }
 
     public void ledOff() {
-        ledBlue.setPower(0.);
-        ledRed.setPower(0.);
+        //ledBlue.setPower(0.);
+        //ledRed.setPower(0.);
     }
 
     public void ledOn() {
-        if (I_AM_BLUE) {
-            ledBlue.setPower(1.);
-        }
-        else {
-            ledRed.setPower(1.);
-        }
+        //if (I_AM_BLUE) {
+        //    ledBlue.setPower(1.);
+        //}
+        //else {
+        //    ledRed.setPower(1.);
+        //}
     }
 
     private void initAprilTag(HardwareMap hMap) {
