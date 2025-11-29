@@ -80,6 +80,7 @@ public class AutoDrive {
         if (opMode.isActive()) {
             while (opMode.isActive() && dist_error > XY_THRESHOLD) {
 
+                odometry.update();
                 cur_pose = odometry.getPose2d();
                 heading = cur_pose.getHeading();
                 pose_error = tgt_pose.minus(cur_pose);
@@ -93,8 +94,8 @@ public class AutoDrive {
                         full_dist);
 
                 turn = head_error * P_TURN_GAIN;
-                drive = driveSpeed * trans_error.getX() / dist_error;
-                strafe = driveSpeed * trans_error.getY() / dist_error;
+                drive = -1.* driveSpeed * trans_error.getX() / dist_error;
+                strafe = -1.* driveSpeed * trans_error.getY() / dist_error;
 
                 double theta = Math.atan2(drive, strafe);
                 double r = Math.hypot(strafe, drive);
@@ -111,8 +112,12 @@ public class AutoDrive {
                         target_pose.getX(), target_pose.getY(), target_pose.getHeading());
                 telemetry.addData("Actual Pose X:Y:R",  "%7f:%7f:%7f",
                         odometry.getX(), odometry.getY(),odometry.getHeading());
-                telemetry.addData("Power       X:Y:R",  "%7f:%7f%7f",
+                telemetry.addData("Trans Error X:Y:R",  "%7f:%7f:%7f",
+                        trans_error.getX(),trans_error.getY(),head_error);
+                telemetry.addData("Move        X:Y:R",  "%7f:%7f%7f",
                         drive, strafe, turn);
+                telemetry.addData("MotorPower  X:Y:R",  "%7f:%7f%7f",
+                        new_drive, new_strafe, turn);
                 telemetry.update();
             }
             driveSys.stop();

@@ -91,14 +91,6 @@ public class TestAutoDrive extends LinearOpMode {
                 telemetry.addLine("... target");
                 telemetry.update();
             }
-
-            double drive = -1. * gamepad1.left_stick_y;
-            double strafe = -1. * gamepad1.left_stick_x;
-            double turn = -1. * gamepad1.right_stick_x;
-            org.firstinspires.ftc.teamcode.subsystems.Drive.INSTANCE.moveRobot(drive, strafe, turn);
-
-            telemetry.addData("Drive: ","powers: %5.2f / %5.2f / %5.2f",drive,strafe,turn);
-            telemetry.update();
             }
         }
     }
