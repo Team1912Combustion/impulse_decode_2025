@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 
-@TeleOp(group = "Test", name = "Drive")
+@TeleOp(name = "TestDrive")
 public class TestDrive extends OpMode {
 
     final private ElapsedTime teleopTimer = new ElapsedTime();

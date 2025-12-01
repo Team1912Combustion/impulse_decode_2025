@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
-@TeleOp(group = "Test", name = "Lift")
+@TeleOp(name = "TestLift")
 public class TestLift extends OpMode {
 
     @Override

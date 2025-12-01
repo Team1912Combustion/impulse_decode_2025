@@ -1,21 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.ActiveOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.AutoDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
-import org.firstinspires.ftc.teamcode.subsystems.PinPoint;
 import org.firstinspires.ftc.teamcode.subsystems.Odometry;
+import org.firstinspires.ftc.teamcode.subsystems.PinPoint;
 import org.firstinspires.ftc.teamcode.utils.Pose2d;
-import org.firstinspires.ftc.teamcode.utils.Rotation2d;
 import org.firstinspires.ftc.teamcode.utils.Transform2d;
 import org.firstinspires.ftc.teamcode.utils.Translation2d;
 
-@TeleOp(name = "TestAutoDrive")
-public class TestAutoDrive extends LinearOpMode {
+@TeleOp(name = "TestStraightDrive")
+public class TestStraightDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -42,53 +40,29 @@ public class TestAutoDrive extends LinearOpMode {
             if (runFwd) {
                 telemetry.addLine("Drive forward");
                 telemetry.update();
-                Pose2d cur_pose = Odometry.INSTANCE.getPose2d();
-                Translation2d trans = new Translation2d(24., 0.);
-                Transform2d move = new Transform2d(trans, cur_pose.getRotation());
-                Pose2d tgt_pose = cur_pose.plus(move);
-                AutoDrive.INSTANCE.driveToPose(0.2,0.8,tgt_pose);
+                AutoDrive.INSTANCE.driveStraight(0.2, 0.8, 18.);
                 telemetry.addLine("... forward");
                 telemetry.update();
             }
             if (runLeft) {
                 telemetry.addLine("Strafe left");
                 telemetry.update();
-                Pose2d cur_pose = Odometry.INSTANCE.getPose2d();
-                Translation2d trans = new Translation2d(0., 24.);
-                Transform2d move = new Transform2d(trans, cur_pose.getRotation());
-                Pose2d tgt_pose = cur_pose.plus(move);
-                AutoDrive.INSTANCE.driveToPose(0.2,0.8,tgt_pose);
+                AutoDrive.INSTANCE.strafeStraight(0.2, 0.8, 18.);
                 telemetry.addLine("... left");
                 telemetry.update();
             }
-
             if (runBkd) {
                 telemetry.addLine("Drive backward");
                 telemetry.update();
-                Pose2d cur_pose = Odometry.INSTANCE.getPose2d();
-                Translation2d trans = new Translation2d(-24., 0.);
-                Transform2d move = new Transform2d(trans, cur_pose.getRotation());
-                Pose2d tgt_pose = cur_pose.plus(move);
-                AutoDrive.INSTANCE.driveToPose(0.2,0.8,tgt_pose);
+                AutoDrive.INSTANCE.driveStraight(0.2, 0.8, -18.);
                 telemetry.addLine("... back");
                 telemetry.update();
             }
             if (runRight) {
                 telemetry.addLine("Strafe right");
                 telemetry.update();
-                Pose2d cur_pose = Odometry.INSTANCE.getPose2d();
-                Translation2d trans = new Translation2d(0., -24.);
-                Transform2d move = new Transform2d(trans, cur_pose.getRotation());
-                Pose2d tgt_pose = cur_pose.plus(move);
-                AutoDrive.INSTANCE.driveToPose(0.2,0.8,tgt_pose);
+                AutoDrive.INSTANCE.strafeStraight(0.2, 0.8, -18.);
                 telemetry.addLine("... right");
-                telemetry.update();
-            }
-            if (runTarget) {
-                telemetry.addLine("Square to target");
-                telemetry.update();
-                AutoDrive.INSTANCE.runSquareToTarget();
-                telemetry.addLine("... target");
                 telemetry.update();
             }
             }
