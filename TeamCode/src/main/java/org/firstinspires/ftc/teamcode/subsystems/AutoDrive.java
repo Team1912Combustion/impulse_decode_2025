@@ -53,6 +53,7 @@ public class AutoDrive {
         driveSys.stop();
         vision.init(hMap);
 
+        odometry.update();
         cur_pose = odometry.getPose2d();
         target_pose = cur_pose;
     }
@@ -60,6 +61,7 @@ public class AutoDrive {
     public void driveToPose(double minDriveSpeed, double maxDriveSpeed, Pose2d tgt_pose) {
         maxDriveSpeed = Math.abs(maxDriveSpeed);
         minDriveSpeed = Math.abs(minDriveSpeed);
+        odometry.update();
         start_pose = odometry.getPose2d();
         cur_pose = start_pose;
         target_pose = tgt_pose;
@@ -76,6 +78,10 @@ public class AutoDrive {
         double drive = 0.;
         double strafe = 0.;
         double turn = 0.;
+        double bearing = 0.;
+        double theta = 0.;
+        double tx = 0.;
+        double ty = 0.;
 
         if (opMode.isActive()) {
             while (opMode.isActive() && dist_error > XY_THRESHOLD) {
@@ -92,20 +98,19 @@ public class AutoDrive {
 
                 driveSpeed = rampSpeed(minDriveSpeed, maxDriveSpeed, dist_so_far, RAMPDIST,
                         full_dist);
+                // rotate the translation vector to the robot coordinate frame
+                bearing = Math.atan2(trans_error.getY(), trans_error.getX()); // angle of translation vector
+                // the rotation from the translation vector to the robot heading
+                theta = AngleUnit.normalizeRadians(heading - bearing);
+                // rotate the translation vector to the robot orientation
+                tx = trans_error.getX() * Math.cos(theta) - trans_error.getY() * Math.sin(theta);
+                ty = trans_error.getX() * Math.sin(theta) + trans_error.getY() * Math.cos(theta);
+                drive = driveSpeed * tx / Math.hypot(tx,ty);
+                strafe = driveSpeed * ty / Math.hypot(tx,ty);
 
                 turn = head_error * P_TURN_GAIN;
-                drive = -1.* driveSpeed * trans_error.getX() / dist_error;
-                strafe = -1.* driveSpeed * trans_error.getY() / dist_error;
 
-                double theta = Math.atan2(drive, strafe);
-                double r = Math.hypot(strafe, drive);
-                // Second, rotate angle by the angle the robot is pointing
-                theta = AngleUnit.normalizeRadians(theta - heading);
-                // Third, convert back to cartesian
-                double new_drive = r * Math.sin(theta);
-                double new_strafe = r * Math.cos(theta);
-
-                driveSys.moveRobot(new_drive, new_strafe, turn);
+                driveSys.moveRobot(drive, strafe, turn);
 
                 telemetry.addData("Motion", "Drive ");
                 telemetry.addData("Target Pose X:Y:R",  "%7f:%7f:%7f",
@@ -114,19 +119,20 @@ public class AutoDrive {
                         odometry.getX(), odometry.getY(),odometry.getHeading());
                 telemetry.addData("Trans Error X:Y:R",  "%7f:%7f:%7f",
                         trans_error.getX(),trans_error.getY(),head_error);
-                telemetry.addData("Move        X:Y:R",  "%7f:%7f%7f",
+                telemetry.addData("Heading, bearing, theta",  "%7f:%7f:%7f",
+                        heading,bearing,theta);
+                telemetry.addData("Motors      X:Y:R",  "%7f:%7f%7f",
                         drive, strafe, turn);
-                telemetry.addData("MotorPower  X:Y:R",  "%7f:%7f%7f",
-                        new_drive, new_strafe, turn);
                 telemetry.update();
             }
             driveSys.stop();
         }
     }
 
-    public void driveStraight(double maxDriveSpeed,
+    public void oldDriveStraight(double maxDriveSpeed,
                               double distance,
                               double heading) {
+        odometry.update();
         cur_pose = odometry.getPose2d();
         double rot = cur_pose.getHeading();
         double x = distance * Math.sin(rot);
@@ -139,6 +145,7 @@ public class AutoDrive {
             maxDriveSpeed = Math.abs(maxDriveSpeed);
             driveSys.moveRobot(maxDriveSpeed, 0, 0);
             while (opMode.isActive() && dist_error > XY_THRESHOLD) {
+                odometry.update();
                 cur_pose = odometry.getPose2d();
                 trans_error = target_pose.minus(cur_pose).getTranslation();
                 dist_error = trans_error.getNorm();
@@ -152,26 +159,64 @@ public class AutoDrive {
         }
     }
 
-    public void turnAndDrive(double maxTurnSpeed, double heading, double holdTime,
-                             double maxDriveSpeed, double distance) {
-        getSteeringCorrection(heading, P_DRIVE_GAIN);
-        while (opMode.isActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
-            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
-            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
-            driveSys.moveRobot(0, 0, turnSpeed);
-            sendTelemetry(true);
+    public void driveStraight(double minDriveSpeed, double maxDriveSpeed,
+                              double x_distance) {
+        double direction = Math.signum(x_distance);
+        odometry.update();
+        cur_pose = odometry.getPose2d();
+        double bearing = cur_pose.getHeading();
+        start_pose = cur_pose;
+        Translation2d trans_error = new Translation2d(x_distance, 0.);
+        Transform2d travel_pose = new Transform2d(trans_error,new Rotation2d(0.));
+        target_pose = cur_pose.plus(travel_pose);
+        double dist_error = trans_error.getNorm();
+        double dist_so_far = 0.;
+        double full_dist = dist_error;
+        if (opMode.isActive()) {
+            while (opMode.isActive() && dist_error > XY_THRESHOLD) {
+                odometry.update();
+                cur_pose = odometry.getPose2d();
+                trans_error = target_pose.minus(cur_pose).getTranslation();
+                dist_error = trans_error.getNorm();
+                dist_so_far = cur_pose.minus(start_pose).getTranslation().getNorm();
+                driveSpeed = rampSpeed(minDriveSpeed, maxDriveSpeed, dist_so_far, RAMPDIST,
+                        full_dist);
+                turnSpeed = getSteeringCorrection(bearing, P_DRIVE_GAIN);
+                driveSys.moveRobot(direction * driveSpeed, 0, turnSpeed);
+                sendTelemetry(false);
+            }
+            driveSys.stop();
         }
-        driveSys.stop();
-        ElapsedTime holdTimer = new ElapsedTime();
-        holdTimer.reset();
-        while (opMode.isActive() && (holdTimer.time() < holdTime)) {
-            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
-            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
-            driveSys.moveRobot(0, 0, turnSpeed);
-            sendTelemetry(true);
+    }
+
+    public void strafeStraight(double minDriveSpeed, double maxDriveSpeed,
+                              double y_distance) {
+        double direction = Math.signum(y_distance);
+        odometry.update();
+        cur_pose = odometry.getPose2d();
+        double bearing = cur_pose.getHeading();
+        start_pose = cur_pose;
+        Translation2d trans_error = new Translation2d(0., y_distance);
+        Transform2d travel_pose = new Transform2d(trans_error,new Rotation2d(0.));
+        target_pose = cur_pose.plus(travel_pose);
+        double dist_error = trans_error.getNorm();
+        double dist_so_far = 0.;
+        double full_dist = dist_error;
+        if (opMode.isActive()) {
+            while (opMode.isActive() && dist_error > XY_THRESHOLD) {
+                odometry.update();
+                cur_pose = odometry.getPose2d();
+                trans_error = target_pose.minus(cur_pose).getTranslation();
+                dist_error = trans_error.getNorm();
+                dist_so_far = cur_pose.minus(start_pose).getTranslation().getNorm();
+                driveSpeed = rampSpeed(minDriveSpeed, maxDriveSpeed, dist_so_far, RAMPDIST,
+                        full_dist);
+                turnSpeed = getSteeringCorrection(bearing, P_DRIVE_GAIN);
+                driveSys.moveRobot(0., direction * driveSpeed, turnSpeed);
+                sendTelemetry(false);
+            }
+            driveSys.stop();
         }
-        driveSys.stop();
-        this.driveStraight(maxDriveSpeed, distance, heading);
     }
 
     public void runSquareToTarget() {
@@ -212,6 +257,7 @@ public class AutoDrive {
     public void turnAndHoldHeading(double maxTurnSpeed, double heading, double holdTime) {
         getSteeringCorrection(heading, P_DRIVE_GAIN);
         while (opMode.isActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
+            odometry.update();
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
             turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
             driveSys.moveRobot(0, 0, turnSpeed);
@@ -250,12 +296,12 @@ public class AutoDrive {
             driveSys.moveRobot(0, 0, turnSpeed);
             sendTelemetry(true);
         }
-
         driveSys.stop();
     }
 
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
         targetHeading = desiredHeading;  // Save for telemetry
+        odometry.update();
         headingError = targetHeading - odometry.getHeading();
         while (headingError > 180)  headingError -= 360;
         while (headingError <= -180) headingError += 360;
