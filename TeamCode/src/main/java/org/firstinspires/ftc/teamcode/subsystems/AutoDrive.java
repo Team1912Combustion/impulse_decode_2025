@@ -94,7 +94,7 @@ public class AutoDrive {
                 rot_error = pose_error.getRotation();
                 dist_error = trans_error.getNorm();
                 head_error = pose_error.getRotation().getRadians();
-                dist_so_far = cur_pose.minus(start_pose).getTranslation().getNorm();
+                dist_so_far = Math.abs(cur_pose.minus(start_pose).getTranslation().getNorm());
 
                 driveSpeed = rampSpeed(minDriveSpeed, maxDriveSpeed, dist_so_far, RAMPDIST,
                         full_dist);
@@ -178,11 +178,15 @@ public class AutoDrive {
                 cur_pose = odometry.getPose2d();
                 trans_error = target_pose.minus(cur_pose).getTranslation();
                 dist_error = trans_error.getNorm();
-                dist_so_far = cur_pose.minus(start_pose).getTranslation().getNorm();
+                dist_so_far = Math.abs(cur_pose.minus(start_pose).getTranslation().getNorm());
                 driveSpeed = rampSpeed(minDriveSpeed, maxDriveSpeed, dist_so_far, RAMPDIST,
                         full_dist);
                 turnSpeed = getSteeringCorrection(bearing, P_DRIVE_GAIN);
                 driveSys.moveRobot(direction * driveSpeed, 0, turnSpeed);
+                telemetry.addData("Straight sofar:RAMP:full",  "%7f:%7f:%7f",
+                        dist_so_far,RAMPDIST,full_dist);
+                telemetry.addData("Straight direction:power",  "%7f:%7f",
+                        direction,direction*driveSpeed);
                 sendTelemetry(false);
             }
             driveSys.stop();
@@ -365,13 +369,13 @@ public class AutoDrive {
 
     private double rampSpeed(double minSpeed, double maxSpeed,
                              double move, double ramp, double travel) {
-       if (travel < ramp)  {
+       if (move < ramp)  {
            return minSpeed +
-                   ( travel / ramp )
+                   ( move / ramp )
                    * (maxSpeed - minSpeed);
-       } else if ( (Math.abs(move) - travel) < ramp) {
+       } else if (travel - move < ramp) {
            return minSpeed +
-                   ( (Math.abs(move)-travel) / ramp )
+                   ( (travel-move) / ramp )
                    * (maxSpeed - minSpeed);
        } else {
            return maxSpeed;

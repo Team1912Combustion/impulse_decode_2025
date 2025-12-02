@@ -22,11 +22,11 @@ public class TestAutoDrive extends LinearOpMode {
         telemetry.addData(">", "Initializing hardware.");
         telemetry.update();
         ActiveOpMode.INSTANCE.init(this);
-        AutoDrive.INSTANCE.init(telemetry, hardwareMap);
         Drive.INSTANCE.init(hardwareMap);
         PinPoint.INSTANCE.init(hardwareMap);
         Odometry.INSTANCE.init(true, true);
         Odometry.INSTANCE.set(0.,0.,0.);
+        AutoDrive.INSTANCE.init(telemetry, hardwareMap);
         telemetry.addData(">", "Initialization complete.");
         telemetry.update();
         while (!isStarted()) {
@@ -46,7 +46,7 @@ public class TestAutoDrive extends LinearOpMode {
                 Translation2d trans = new Translation2d(24., 0.);
                 Transform2d move = new Transform2d(trans, cur_pose.getRotation());
                 Pose2d tgt_pose = cur_pose.plus(move);
-                AutoDrive.INSTANCE.driveToPose(0.2,0.8,tgt_pose);
+                AutoDrive.INSTANCE.driveToPose(0.1,0.3,tgt_pose);
                 telemetry.addLine("... forward");
                 telemetry.update();
             }
@@ -57,7 +57,7 @@ public class TestAutoDrive extends LinearOpMode {
                 Translation2d trans = new Translation2d(0., 24.);
                 Transform2d move = new Transform2d(trans, cur_pose.getRotation());
                 Pose2d tgt_pose = cur_pose.plus(move);
-                AutoDrive.INSTANCE.driveToPose(0.2,0.8,tgt_pose);
+                AutoDrive.INSTANCE.driveToPose(0.1,0.3,tgt_pose);
                 telemetry.addLine("... left");
                 telemetry.update();
             }

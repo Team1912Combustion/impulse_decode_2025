@@ -20,11 +20,11 @@ public class TestStraightDrive extends LinearOpMode {
         telemetry.addData(">", "Initializing hardware.");
         telemetry.update();
         ActiveOpMode.INSTANCE.init(this);
-        AutoDrive.INSTANCE.init(telemetry, hardwareMap);
-        Drive.INSTANCE.init(hardwareMap);
         PinPoint.INSTANCE.init(hardwareMap);
+        Drive.INSTANCE.init(hardwareMap);
         Odometry.INSTANCE.init(true, true);
         Odometry.INSTANCE.set(0.,0.,0.);
+        AutoDrive.INSTANCE.init(telemetry, hardwareMap);
         telemetry.addData(">", "Initialization complete.");
         telemetry.update();
         while (!isStarted()) {

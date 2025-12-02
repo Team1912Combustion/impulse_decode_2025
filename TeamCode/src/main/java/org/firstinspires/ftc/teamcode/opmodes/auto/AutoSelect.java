@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.ActiveOpMode;
+import org.firstinspires.ftc.teamcode.subsystems.AutoDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -30,16 +31,16 @@ public class AutoSelect extends LinearOpMode
 
         telemetry.addData(">", "initializing hardware.");
         telemetry.update();
+        PinPoint.INSTANCE.init(hardwareMap);
         ActiveOpMode.INSTANCE.init(this);
-        AutoSettings.INSTANCE.readAutoConfig();
-        Drive.INSTANCE.init(hardwareMap);
-        Vision.INSTANCE.init(hardwareMap);
-        Vision.INSTANCE.setAlliance(AutoSettings.INSTANCE.iAmBlue());
         Catapult.INSTANCE.init(hardwareMap);
         Lift.INSTANCE.init(hardwareMap);
         Intake.INSTANCE.init(hardwareMap);
-        PinPoint.INSTANCE.init(hardwareMap);
         Odometry.INSTANCE.teleinit();
+        AutoSettings.INSTANCE.readAutoConfig();
+        Drive.INSTANCE.init(hardwareMap);
+        AutoDrive.INSTANCE.init(telemetry, hardwareMap);
+        Vision.INSTANCE.setAlliance(AutoSettings.INSTANCE.iAmBlue());
         telemetry.update();
         telemetry.addData(">", "hardware init complete.");
 
@@ -89,6 +90,7 @@ public class AutoSelect extends LinearOpMode
         timer.reset();
         //while (opModeIsActive() & timer.seconds() < 3.) { }
 
+        RedGoal.runTest();
         //backdropPixel.update(autoSettings.iAmBlue());
         //doubleVision.update(autoSettings.iAmBlue(), autoSettings.rightShift(), autoSettings.leftShift());
         //lastPosition = doubleVision.MarkerProcessor.getPosition();
