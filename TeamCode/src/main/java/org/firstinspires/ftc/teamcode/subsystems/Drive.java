@@ -31,10 +31,10 @@ private Drive() { }
 
     @Override
     public void initialize() {
-        leftFrontDrive  = new MotorEx("left_front_drive");
-        leftBackDrive   = new MotorEx("left_back_drive");
-        rightFrontDrive = new MotorEx("right_back_drive");
-        rightBackDrive  = new MotorEx("right_back_drive");
+        leftFrontDrive  = new MotorEx("left_front");
+        leftBackDrive   = new MotorEx("left_back");
+        rightFrontDrive = new MotorEx("right_front");
+        rightBackDrive  = new MotorEx("right_back");
 
         leftFrontDrive.reverse();
         leftBackDrive.reverse();
@@ -86,7 +86,7 @@ private Drive() { }
         Vision.TargetPose targetPose = Vision.INSTANCE.targetPose;
 
         m_timer.resetTimer();;
-        while (m_timer.getElapsedTimeSeconds() < timeout) {
+        while (ActiveOpMode.opModeIsActive() && m_timer.getElapsedTimeSeconds() < timeout) {
             targetPose = Vision.INSTANCE.getTargetPose();
             if (targetPose.id > 0) {
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
@@ -97,6 +97,7 @@ private Drive() { }
                 double drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
                 double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
                 double strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+                moveRobot(drive, strafe, turn);
             }
         }
     }

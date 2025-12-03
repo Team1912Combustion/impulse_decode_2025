@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.LambdaCommand;
+import dev.nextftc.ftc.ActiveOpMode;
 
 import com.pedropathing.util.Timer;
 
@@ -13,12 +16,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.utility.LambdaCommand;
-import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.ftc.ActiveOpMode;
-
 public class Vision implements Subsystem {
+
     public static final Vision INSTANCE = new Vision();
     private Vision() { }
     private static final boolean USE_WEBCAM = true;
@@ -27,7 +26,6 @@ public class Vision implements Subsystem {
     private VisionPortal visionPortal;
 
     private boolean I_AM_BLUE;
-    private int MY_TARGET_ID =  0;
     private int BLUE_TAG_ID =  20;
     private int GPP_TAG_ID =  21;
     private int PGP_TAG_ID =  22;

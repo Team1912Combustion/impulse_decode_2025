@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.controllable.RunToPosition;
@@ -24,11 +22,11 @@ public class Catapult implements Subsystem {
                     .build();
 
     public Command load() {
-        return new RunToPosition (controller, 10.).requires(this);
+        return new RunToPosition (controller, 50.).requires(this);
     }
 
     public Command ready() {
-        return new RunToPosition (controller, 20.).requires(this);
+        return new RunToPosition (controller, 70.).requires(this);
     }
 
     public Command launch() {

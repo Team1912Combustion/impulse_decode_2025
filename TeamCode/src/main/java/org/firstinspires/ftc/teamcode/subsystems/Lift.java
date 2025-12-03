@@ -18,7 +18,7 @@ public class Lift implements Subsystem {
             ControlSystem.builder().posPid(0.005, 0.0, 0.0).build();
 
     public Command push() {
-        return new RunToPosition(controller, 10.);
+        return new RunToPosition(controller, 4700.);
     }
 
     public Command pull() {
