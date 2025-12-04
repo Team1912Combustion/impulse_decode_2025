@@ -17,16 +17,12 @@ public class Catapult implements Subsystem {
     public MotorGroup motors;
 
     public ControlSystem controller = ControlSystem.builder()
-                    .posPid(0.005, 0.0, 0.0)
-                    .elevatorFF(0)
+                    .posPid(0.01, 0.0, 0.0)
+                    .elevatorFF(.1)
                     .build();
 
     public Command load() {
-        return new RunToPosition (controller, 50.).requires(this);
-    }
-
-    public Command ready() {
-        return new RunToPosition (controller, 70.).requires(this);
+        return new RunToPosition (controller, 80.).requires(this);
     }
 
     public Command launch() {
@@ -45,6 +41,8 @@ public class Catapult implements Subsystem {
     public void initialize() {
         left_motor = new MotorEx("left_catapult").brakeMode().zeroed();
         right_motor = new MotorEx("right_catapult").reversed().brakeMode().zeroed();
+        left_motor.atPosition(0.);
+        right_motor.atPosition(0.);
         motors = new MotorGroup(left_motor, right_motor);
     }
 
