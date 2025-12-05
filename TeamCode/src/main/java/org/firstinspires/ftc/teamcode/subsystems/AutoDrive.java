@@ -66,7 +66,7 @@ public class AutoDrive {
         cur_pose = start_pose;
         target_pose = tgt_pose;
 
-        double heading = cur_pose.getHeading();
+        double heading = cur_pose.getHeadingDegrees();
         Transform2d pose_error = tgt_pose.minus(cur_pose);
         Translation2d trans_error = pose_error.getTranslation();
         Rotation2d rot_error = pose_error.getRotation();
@@ -88,7 +88,7 @@ public class AutoDrive {
 
                 odometry.update();
                 cur_pose = odometry.getPose2d();
-                heading = cur_pose.getHeading();
+                heading = cur_pose.getHeadingDegrees();
                 pose_error = tgt_pose.minus(cur_pose);
                 trans_error = pose_error.getTranslation();
                 rot_error = pose_error.getRotation();
@@ -114,9 +114,9 @@ public class AutoDrive {
 
                 telemetry.addData("Motion", "Drive ");
                 telemetry.addData("Target Pose X:Y:R",  "%7f:%7f:%7f",
-                        target_pose.getX(), target_pose.getY(), target_pose.getHeading());
+                        target_pose.getX(), target_pose.getY(), target_pose.getHeadingDegrees());
                 telemetry.addData("Actual Pose X:Y:R",  "%7f:%7f:%7f",
-                        odometry.getX(), odometry.getY(),odometry.getHeading());
+                        odometry.getX(), odometry.getY(),odometry.getPose2d().getHeadingDegrees());
                 telemetry.addData("Trans Error X:Y:R",  "%7f:%7f:%7f",
                         trans_error.getX(),trans_error.getY(),head_error);
                 telemetry.addData("Heading, bearing, theta",  "%7f:%7f:%7f",
@@ -160,11 +160,11 @@ public class AutoDrive {
     }
 
     public void driveStraight(double minDriveSpeed, double maxDriveSpeed,
-                              double x_distance) {
+                              double x_distance, double timeout) {
         double direction = Math.signum(x_distance);
         odometry.update();
         cur_pose = odometry.getPose2d();
-        double bearing = cur_pose.getHeading();
+        double bearing = cur_pose.getHeadingDegrees();
         start_pose = cur_pose;
         Translation2d trans_error = new Translation2d(x_distance, 0.);
         Transform2d travel_pose = new Transform2d(trans_error,new Rotation2d(0.));
@@ -173,7 +173,11 @@ public class AutoDrive {
         double dist_so_far = 0.;
         double full_dist = dist_error;
         if (opMode.isActive()) {
-            while (opMode.isActive() && dist_error > XY_THRESHOLD) {
+            ElapsedTime m_timer = new ElapsedTime();
+            m_timer.reset();
+            while (opMode.isActive()
+                    && dist_error > XY_THRESHOLD
+                    && m_timer.seconds() < timeout) {
                 odometry.update();
                 cur_pose = odometry.getPose2d();
                 trans_error = target_pose.minus(cur_pose).getTranslation();
@@ -198,7 +202,7 @@ public class AutoDrive {
         double direction = Math.signum(y_distance);
         odometry.update();
         cur_pose = odometry.getPose2d();
-        double bearing = cur_pose.getHeading();
+        double bearing = cur_pose.getHeadingDegrees();
         start_pose = cur_pose;
         Translation2d trans_error = new Translation2d(0., y_distance);
         Transform2d travel_pose = new Transform2d(trans_error,new Rotation2d(0.));
@@ -255,7 +259,7 @@ public class AutoDrive {
                 driveSys.moveRobot(drive, strafe, turn);
             }
         }
-        driveStraight(MAX_AUTO_SPEED, 12., odometry.getHeading());
+        driveStraight(0.2, 0.5,12., 3.);
     }
 
     public void turnAndHoldHeading(double maxTurnSpeed, double heading, double holdTime) {
@@ -306,7 +310,7 @@ public class AutoDrive {
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
         targetHeading = desiredHeading;  // Save for telemetry
         odometry.update();
-        headingError = targetHeading - odometry.getHeading();
+        headingError = targetHeading - odometry.getPose2d().getHeadingDegrees();
         while (headingError > 180)  headingError -= 360;
         while (headingError <= -180) headingError += 360;
         return Range.clip(headingError * proportionalGain, -1, 1);
@@ -316,11 +320,11 @@ public class AutoDrive {
         if (turnonly) {
             telemetry.addData("Motion", "Turning");
             telemetry.addData("Heading- Target : Current", "%5.2f : %5.0f",
-                    targetHeading, odometry.getHeading());
+                    targetHeading, odometry.getPose2d().getHeadingDegrees());
         } else {
             telemetry.addData("Motion", "Drive ");
             telemetry.addData("Target Pose X:Y:H",  "%7f:%7f:%7f",
-                    target_pose.getX(), target_pose.getY(), target_pose.getHeading());
+                    target_pose.getX(), target_pose.getY(), target_pose.getHeadingDegrees());
             telemetry.addData("Actual Pose X:Y:H",  "%7f:%7f:%7f",
                     odometry.getX(), odometry.getY(),odometry.getHeading());
         }
@@ -337,7 +341,7 @@ public class AutoDrive {
 
             cur_pose = odometry.getPose2d();
             Pose2d start_pose = cur_pose;
-            double rot = cur_pose.getHeading();
+            double rot = cur_pose.getHeadingDegrees();
             double x = Math.cos(distance * Math.sin(rot));
             double y = Math.sin(distance * Math.cos(rot));
             Translation2d trans_error = new Translation2d(x, y);

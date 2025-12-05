@@ -80,14 +80,14 @@ public class RunTeleop extends OpMode {
             intakeOutButton = false;
         }
 
-        boolean liftOutButton = gamepad1.dpad_up;
-        boolean liftUpButton = gamepad1.dpad_down;
+        boolean liftOutButton = gamepad2.dpad_down;
+        boolean liftUpButton = gamepad2.dpad_up;
         if (liftOutButton && liftUpButton) {
             liftOutButton = false;
         }
 
-        boolean catapultLaunchButton = gamepad1.right_trigger > 0.2;
-        boolean catapultLoadButton = gamepad1.right_bumper;
+        boolean catapultLaunchButton = gamepad2.right_trigger > 0.2;
+        boolean catapultLoadButton = gamepad2.right_bumper;
         if (catapultLaunchButton && catapultLoadButton) {
             catapultLaunchButton = false;
         }

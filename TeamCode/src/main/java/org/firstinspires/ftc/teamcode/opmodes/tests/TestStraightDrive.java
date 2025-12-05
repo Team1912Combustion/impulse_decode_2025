@@ -40,7 +40,7 @@ public class TestStraightDrive extends LinearOpMode {
             if (runFwd) {
                 telemetry.addLine("Drive forward");
                 telemetry.update();
-                AutoDrive.INSTANCE.driveStraight(0.2, 0.8, 18.);
+                AutoDrive.INSTANCE.driveStraight(0.2, 0.8, 18.,3.);
                 telemetry.addLine("... forward");
                 telemetry.update();
             }
@@ -54,7 +54,7 @@ public class TestStraightDrive extends LinearOpMode {
             if (runBkd) {
                 telemetry.addLine("Drive backward");
                 telemetry.update();
-                AutoDrive.INSTANCE.driveStraight(0.2, 0.8, -18.);
+                AutoDrive.INSTANCE.driveStraight(0.2, 0.8, -18., 3.);
                 telemetry.addLine("... back");
                 telemetry.update();
             }

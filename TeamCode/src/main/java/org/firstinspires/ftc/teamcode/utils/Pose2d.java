@@ -228,6 +228,9 @@ public class Pose2d {
         return new Pose2d(m_translation, new Rotation2d(getHeading() + deltaTheta));
     }
 
+    public double getHeadingDegrees() {
+        return m_rotation.getDegrees();
+    }
     public double getHeading() {
         return m_rotation.getRadians();
     }

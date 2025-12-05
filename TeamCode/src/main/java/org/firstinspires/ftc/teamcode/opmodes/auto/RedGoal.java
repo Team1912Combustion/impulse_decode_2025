@@ -30,11 +30,22 @@ public class RedGoal{
         m_timer.reset();
         while (m_timer.milliseconds() < 200.) { }
         Catapult.INSTANCE.load();
+        m_timer.reset();
+        while (m_timer.milliseconds() < 1000.) { }
         Catapult.INSTANCE.hold();
-        AutoDrive.INSTANCE.driveStraight(0.2, 0.8, -12.);
-        AutoDrive.INSTANCE.holdHeading(0.5, 0., 1.);
-        AutoDrive.INSTANCE.turnAndHoldHeading(0.5, -60., 1.);
-        AutoDrive.INSTANCE.strafeStraight(0.2, 0.8, -24.);
+        m_timer.reset();
+        while (m_timer.milliseconds() < 1000.) { }
+        AutoDrive.INSTANCE.sendTelemetry(false);
+        m_timer.reset();
+        while (m_timer.milliseconds() < 1000.) { }
+        AutoDrive.INSTANCE.driveStraight(0.2, 0.6, -55.5, 4.5);
+        AutoDrive.INSTANCE.holdHeading(0.8, 0., 0.5);
+        AutoDrive.INSTANCE.turnAndHoldHeading(0.8, 43.5, 0.5);
+        Intake.INSTANCE.intakein();
+        AutoDrive.INSTANCE.driveStraight(0.2, 0.27, 46.,8);
+        m_timer.reset();
+        while (m_timer.milliseconds() < 200.) { }
+        Intake.INSTANCE.intakeoff();
     }
 
 }
