@@ -198,7 +198,7 @@ public class AutoDrive {
     }
 
     public void strafeStraight(double minDriveSpeed, double maxDriveSpeed,
-                              double y_distance) {
+                              double y_distance, double timeout) {
         double direction = Math.signum(y_distance);
         odometry.update();
         cur_pose = odometry.getPose2d();
@@ -211,7 +211,11 @@ public class AutoDrive {
         double dist_so_far = 0.;
         double full_dist = dist_error;
         if (opMode.isActive()) {
-            while (opMode.isActive() && dist_error > XY_THRESHOLD) {
+            ElapsedTime m_timer = new ElapsedTime();
+            m_timer.reset();
+            while (opMode.isActive()
+                    && dist_error > XY_THRESHOLD
+                    && m_timer.seconds() < timeout) {
                 odometry.update();
                 cur_pose = odometry.getPose2d();
                 trans_error = target_pose.minus(cur_pose).getTranslation();

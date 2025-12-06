@@ -47,7 +47,7 @@ public class TestStraightDrive extends LinearOpMode {
             if (runLeft) {
                 telemetry.addLine("Strafe left");
                 telemetry.update();
-                AutoDrive.INSTANCE.strafeStraight(0.2, 0.8, 18.);
+                AutoDrive.INSTANCE.strafeStraight(0.2, 0.8, 18., 3);
                 telemetry.addLine("... left");
                 telemetry.update();
             }
@@ -61,7 +61,7 @@ public class TestStraightDrive extends LinearOpMode {
             if (runRight) {
                 telemetry.addLine("Strafe right");
                 telemetry.update();
-                AutoDrive.INSTANCE.strafeStraight(0.2, 0.8, -18.);
+                AutoDrive.INSTANCE.strafeStraight(0.2, 0.8, -18.,3);
                 telemetry.addLine("... right");
                 telemetry.update();
             }

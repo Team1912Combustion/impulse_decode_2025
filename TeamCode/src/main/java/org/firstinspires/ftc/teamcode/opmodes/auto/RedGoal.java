@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 public class RedGoal{
 
-    private boolean iAmBlue() { return false;}
+    private static boolean iAmBlue() { return false;}
 
     double driveSpeed = 0.25;
     double slowSpeed = 0.15;
@@ -38,14 +38,35 @@ public class RedGoal{
         AutoDrive.INSTANCE.sendTelemetry(false);
         m_timer.reset();
         while (m_timer.milliseconds() < 1000.) { }
-        AutoDrive.INSTANCE.driveStraight(0.2, 0.6, -55.5, 4.5);
+        AutoDrive.INSTANCE.driveStraight(0.2, 0.6, -52.5, 4.5);
         AutoDrive.INSTANCE.holdHeading(0.8, 0., 0.5);
-        AutoDrive.INSTANCE.turnAndHoldHeading(0.8, 43.5, 0.5);
+        if (iAmBlue()) {
+            AutoDrive.INSTANCE.turnAndHoldHeading(0.8, 43.5, 0.5);
+        } else {
+            AutoDrive.INSTANCE.turnAndHoldHeading(0.8, -43.5, 0.5);
+        }
         Intake.INSTANCE.intakein();
-        AutoDrive.INSTANCE.driveStraight(0.2, 0.27, 46.,8);
+        AutoDrive.INSTANCE.driveStraight(0.2, 0.27, 46.,6);
         m_timer.reset();
         while (m_timer.milliseconds() < 200.) { }
         Intake.INSTANCE.intakeoff();
+        if (iAmBlue()) {
+            AutoDrive.INSTANCE.turnAndHoldHeading(0.8, 5, 0.5);
+            AutoDrive.INSTANCE.strafeStraight(0.2, 0.6, -29, 3);
+        } else {
+            AutoDrive.INSTANCE.turnAndHoldHeading(0.8, -5, 0.5);
+            AutoDrive.INSTANCE.strafeStraight(0.2, 0.6, 29, 3);
+        }
+        AutoDrive.INSTANCE.driveStraight(0.2, 0.6, 25,2.5);
+        Catapult.INSTANCE.load();
+        m_timer.reset();
+        while (m_timer.milliseconds() < 200.) { }
+        Catapult.INSTANCE.launch();
+        m_timer.reset();
+        while (m_timer.milliseconds() < 200.) { }
+        Catapult.INSTANCE.hold();
+
+
     }
 
 }

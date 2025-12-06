@@ -4,5 +4,5 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name = "BlueGoal")
 public class BlueGoal extends RedGoal {
-    private boolean iAmBlue() { return true;}
+    private static boolean iAmBlue() { return true;}
 }
