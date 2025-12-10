@@ -1,18 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.ActiveOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.AutoDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
-public class RedGoal{
-
-    private static boolean iAmBlue() { return false;}
+public class AtGoal {
 
     double driveSpeed = 0.25;
     double slowSpeed = 0.15;
@@ -38,19 +32,19 @@ public class RedGoal{
         AutoDrive.INSTANCE.sendTelemetry(false);
         m_timer.reset();
         while (m_timer.milliseconds() < 1000.) { }
-        AutoDrive.INSTANCE.driveStraight(0.2, 0.6, -52.5, 4.5);
+        AutoDrive.INSTANCE.driveStraight(0.2, 0.6, -52.5, 4.);
         AutoDrive.INSTANCE.holdHeading(0.8, 0., 0.5);
-        if (iAmBlue()) {
+        if (AutoSettings.INSTANCE.iAmBlue()) {
             AutoDrive.INSTANCE.turnAndHoldHeading(0.8, 43.5, 0.5);
         } else {
             AutoDrive.INSTANCE.turnAndHoldHeading(0.8, -43.5, 0.5);
         }
         Intake.INSTANCE.intakein();
-        AutoDrive.INSTANCE.driveStraight(0.2, 0.27, 46.,6);
+        AutoDrive.INSTANCE.driveStraight(0.2, 0.27, 46.,4.8);
         m_timer.reset();
         while (m_timer.milliseconds() < 200.) { }
         Intake.INSTANCE.intakeoff();
-        if (iAmBlue()) {
+        if (AutoSettings.INSTANCE.iAmBlue()) {
             AutoDrive.INSTANCE.turnAndHoldHeading(0.8, 5, 0.5);
             AutoDrive.INSTANCE.strafeStraight(0.2, 0.6, -29, 3);
         } else {
