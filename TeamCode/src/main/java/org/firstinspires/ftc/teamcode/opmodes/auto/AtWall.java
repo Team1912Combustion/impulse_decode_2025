@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.subsystems.ActiveOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.AutoDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -27,12 +29,10 @@ public class AtWall {
 
         ElapsedTime m_timer = new ElapsedTime();
         m_timer.reset();
-        while (m_timer.milliseconds() < 25000.) {
-        }
+        while (ActiveOpMode.INSTANCE.isActive() && m_timer.seconds() < 25.) { }
         AutoDrive.INSTANCE.driveStraight(0.2, 0.6, 15, 2);
-
     }
 
-    }
+}
 
 

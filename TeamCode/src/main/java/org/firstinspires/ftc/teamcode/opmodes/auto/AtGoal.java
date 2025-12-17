@@ -86,11 +86,49 @@ public class AtGoal {
         } else {
             AutoDrive.INSTANCE.turnAndHoldHeading(0.8, -43.5, 0.5);
         }
-        if (AutoSettings.INSTANCE.iAmBlue()) {
+        if(AutoSettings.INSTANCE.iAmBlue()) {
             AutoDrive.INSTANCE.strafeStraight(0.2, 0.6, 28, 2);
+        }
+        else {
+            AutoDrive.INSTANCE.strafeStraight(0.2,0.6, -28.,2);
+        }
+
+// intake 2nd row
+        Catapult.INSTANCE.load();
+        Intake.INSTANCE.intakein();
+        AutoDrive.INSTANCE.driveStraight(0.2, 0.27, 65., 5);
+        m_timer.reset();
+        while (m_timer.milliseconds() < 1000.) {
+        }
+        Intake.INSTANCE.intakeoff();
+
+
+        AutoDrive.INSTANCE.driveStraight(0.2, 0.8, -25, 4.5);
+
+        // strafe right
+
+        if (AutoSettings.INSTANCE.iAmBlue()) {
+            AutoDrive.INSTANCE.turnAndHoldHeading(0.8, 55, .2);
         } else {
-            AutoDrive.INSTANCE.strafeStraight(0.2, 0.6, -28., 2);
+            AutoDrive.INSTANCE.turnAndHoldHeading(0.8, -55, .2);
+        }
+        AutoDrive.INSTANCE.driveStraight(0.2, 0.6, 20, 3);
+
+
+        m_timer.reset();
+        while (m_timer.milliseconds() < 200.) {
+        }
+        if (AutoSettings.INSTANCE.iAmBlue()) {
+            AutoDrive.INSTANCE.turnAndHoldHeading(0.3, 45, 1.5);
+            Intake.INSTANCE.intakein();
+            AutoDrive.INSTANCE.driveStraight(0.2, 0.8, 20, 1.5);
+        } else {
+            AutoDrive.INSTANCE.turnAndHoldHeading(0.3, -45, 1.5);
+            Intake.INSTANCE.intakein();
+            AutoDrive.INSTANCE.driveStraight(0.2, 0.5, 20, 1.5);
         }
 
     }
+
+
 }
