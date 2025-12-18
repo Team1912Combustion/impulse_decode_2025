@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Odometry;
 
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 
-@TeleOp(group = "Test", name = "TestOdometry")
+@TeleOp
 public class TestOdometry extends CommandOpMode {
     private Odometry odometry = null;
 

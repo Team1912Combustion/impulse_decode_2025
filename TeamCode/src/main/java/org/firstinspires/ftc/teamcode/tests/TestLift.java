@@ -7,7 +7,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
-@TeleOp(group = "Test", name = "TestLift")
+@TeleOp
 public class TestLift extends CommandOpMode {
 
     private GamepadEx toolOp;

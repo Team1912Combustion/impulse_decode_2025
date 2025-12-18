@@ -7,7 +7,7 @@ import com.seattlesolvers.solverslib.command.CommandOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.PinPoint;
 import com.seattlesolvers.solverslib.geometry.Pose2d;
 
-@TeleOp(group = "Test", name = "TestPinPoint")
+@TeleOp
 public class TestPinPoint extends CommandOpMode {
     private PinPoint pinpoint = null;
 

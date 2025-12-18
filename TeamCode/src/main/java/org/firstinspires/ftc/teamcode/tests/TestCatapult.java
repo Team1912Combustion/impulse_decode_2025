@@ -7,7 +7,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 
-@TeleOp(group = "Test", name = "TestCatapult")
+@TeleOp
 public class TestCatapult extends CommandOpMode {
 
     private GamepadEx toolOp;
@@ -18,7 +18,7 @@ public class TestCatapult extends CommandOpMode {
         toolOp = new GamepadEx(gamepad1);
         catapult = new Catapult(hardwareMap);
         register(catapult);
-        catapult.setDefaultCommand(catapult.hold());
+        catapult.setDefaultCommand(catapult.hold().perpetually());
         toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(catapult.load());
         toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(catapult.launch());
     }

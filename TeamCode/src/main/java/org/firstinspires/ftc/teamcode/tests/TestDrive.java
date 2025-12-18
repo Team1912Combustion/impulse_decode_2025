@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Odometry;
 
-@TeleOp(group = "Test", name = "TestDrive")
+@TeleOp
 public class TestDrive extends CommandOpMode {
 
     private GamepadEx joystick;

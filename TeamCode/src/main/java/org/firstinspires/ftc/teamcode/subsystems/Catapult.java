@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.Subsystem;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -40,13 +41,15 @@ public class Catapult implements Subsystem {
     }
 
     public Command launch() {
-        return new InstantCommand (this::set_launch,this);
+        return new InstantCommand (this::set_launch,this)
+                                   .andThen(new WaitCommand(100));
     }
     public Command hold() {
         return new InstantCommand (this::set_hold,this);
     }
     public Command load() {
-        return new InstantCommand (this::set_load,this);
+        return new InstantCommand (this::set_load,this)
+                                   .andThen(new WaitCommand(100));
     }
 
     public double getPosition() {

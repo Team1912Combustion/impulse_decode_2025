@@ -7,7 +7,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
-@TeleOp(group = "Test", name = "TestIntake")
+@TeleOp
 public class TestIntake extends CommandOpMode {
 
     private GamepadEx toolOp;
