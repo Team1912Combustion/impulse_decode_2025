@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake implements Subsystem {
 
-    String motor_name = "intake";
+    String motor_name = "intake_motor";
 
-    private static double INTAKE_IN_POWER = .65;
+    private static double INTAKE_IN_POWER = 1.0;
     private static double INTAKE_OUT_POWER = -0.7;
     private static double INTAKE_OFF_POWER = 0.;
     private MotorEx intake_motor;
@@ -19,6 +19,7 @@ public class Intake implements Subsystem {
     public Intake(final HardwareMap hardwareMap) {
         intake_motor = new MotorEx(hardwareMap, motor_name);
         intake_motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        intake_motor.setInverted(true);
     }
 
     public void set_in(){

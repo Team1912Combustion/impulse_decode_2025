@@ -18,7 +18,7 @@ public class TestLift extends CommandOpMode {
         toolOp = new GamepadEx(gamepad1);
         lift = new Lift(hardwareMap);
         register(lift);
-        lift.setDefaultCommand(lift.run_hold());
+        lift.setDefaultCommand(lift.run_hold().perpetually());
         toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(lift.run_stow());
         toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(lift.run_tip());
     }

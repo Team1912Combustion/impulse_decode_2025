@@ -14,7 +14,7 @@ public class TestOdometry extends CommandOpMode {
     public void initialize() {
         odometry = new Odometry(hardwareMap, telemetry);
         register(odometry);
-        odometry.setDefaultCommand(odometry.run_update());
+        odometry.setDefaultCommand(odometry.run_update().perpetually());
     }
 
     @Override public void run() {

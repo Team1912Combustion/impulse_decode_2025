@@ -15,7 +15,7 @@ public class TestPinPoint extends CommandOpMode {
     public void initialize() {
         pinpoint = new PinPoint(hardwareMap);
         register(pinpoint);
-        pinpoint.setDefaultCommand(pinpoint.run_update());
+        pinpoint.setDefaultCommand(pinpoint.run_update().perpetually());
     }
 
     @Override public void run() {

@@ -27,9 +27,9 @@ public class DefaultDrive extends CommandBase {
     @Override
     public void execute() {
         if (joystick.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
-            drive.driveField(joystick.getLeftX(), joystick.getLeftY(), joystick.getRightX());
+            drive.driveField(-1.*joystick.getLeftY(), -1.*joystick.getLeftX(), -1.*joystick.getRightX());
         }  else {
-            drive.drive(joystick.getLeftX(), joystick.getLeftY(), joystick.getRightX());
+            drive.drive(-1.*joystick.getLeftY(), -1.*joystick.getLeftX(), -1.*joystick.getRightX());
         }
     }
 

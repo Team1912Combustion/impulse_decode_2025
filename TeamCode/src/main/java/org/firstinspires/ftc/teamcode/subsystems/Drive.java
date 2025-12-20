@@ -32,8 +32,8 @@ public class Drive implements Subsystem {
         right_front = new MotorEx(hardwareMap, "right_front");
         right_back  = new MotorEx(hardwareMap, "right_back");
 
-        left_front.setInverted(true);
-        left_back.setInverted(true);
+        //left_front.setInverted(true);
+        //left_back.setInverted(true);
 
         left_front.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         right_front.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);

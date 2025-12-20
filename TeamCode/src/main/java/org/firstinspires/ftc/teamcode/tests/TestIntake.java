@@ -18,8 +18,8 @@ public class TestIntake extends CommandOpMode {
         toolOp = new GamepadEx(gamepad1);
         intake = new Intake(hardwareMap);
         register(intake);
-        intake.setDefaultCommand(intake.intake_off());
-        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(intake.intake_out());
-        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(intake.intake_in());
+        intake.setDefaultCommand(intake.intake_off().perpetually());
+        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whileHeld(intake.intake_out());
+        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whileHeld(intake.intake_in());
     }
 }
