@@ -11,7 +11,7 @@ public class Intake implements Subsystem {
 
     String motor_name = "intake_motor";
 
-    private static double INTAKE_IN_POWER = 1.0;
+    private static double INTAKE_IN_POWER = .65;
     private static double INTAKE_OUT_POWER = -0.7;
     private static double INTAKE_OFF_POWER = 0.;
     private MotorEx intake_motor;

@@ -7,6 +7,7 @@ import com.pedropathing.util.Timer;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.Subsystem;
+import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.drivebase.MecanumDrive;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -43,10 +44,10 @@ public class Drive implements Subsystem {
         right_front.resetEncoder();
         left_back.resetEncoder();
         right_back.resetEncoder();
-        left_front.setRunMode(MotorEx.RunMode.VelocityControl);
-        right_front.setRunMode(MotorEx.RunMode.VelocityControl);
-        left_back.setRunMode(MotorEx.RunMode.VelocityControl);
-        right_back.setRunMode(MotorEx.RunMode.VelocityControl);
+        left_front.setRunMode(MotorEx.RunMode.RawPower);
+        right_front.setRunMode(MotorEx.RunMode.RawPower);
+        left_back.setRunMode(MotorEx.RunMode.RawPower);
+        right_back.setRunMode(MotorEx.RunMode.RawPower);
 
         drive = new MecanumDrive(
                 left_front,

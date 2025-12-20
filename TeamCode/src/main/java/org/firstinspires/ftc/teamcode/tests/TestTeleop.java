@@ -40,21 +40,38 @@ public class TestTeleop extends CommandOpMode {
         lift = new Lift(hardwareMap);
         register(lift);
         lift.setDefaultCommand(lift.run_hold().perpetually());
-        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(lift.run_stow());
-        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(lift.run_tip());
+        //toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(lift.run_stow());
+        //toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(lift.run_tip());
 
         odometry = new Odometry(hardwareMap, telemetry);
         drive = new Drive(hardwareMap, odometry);
         register(drive);
         drive.setDefaultCommand( new DefaultDrive( drive, joystick) );
-        joystick.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whileHeld(intake.intake_out());
-        joystick.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whileHeld(intake.intake_in());
+        joystick.getGamepadButton(GamepadKeys.Button.B).whileHeld(intake.intake_out());
+        joystick.getGamepadButton(GamepadKeys.Button.X).whileHeld(intake.intake_in());
 
-        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(catapult.load());
-        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(catapult.launch());
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(lift.run_stow());
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(lift.run_tip());
+        //joystick.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(catapult.load());
+        //joystick.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(catapult.launch());
+        joystick.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(lift.run_stow());
+        joystick.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(lift.run_tip());
+        if (toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > .5) {
+            catapult.launch().schedule();
+        }
+        if (toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > .5) {
+            catapult.load().schedule();
+        }
 
+    }
+
+    @Override
+    public void run() {
+        super.run();
+        if (toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > .5) {
+            catapult.launch().schedule();
+        }
+        if (toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > .5) {
+            catapult.load().schedule();
+        }
 
     }
 }
