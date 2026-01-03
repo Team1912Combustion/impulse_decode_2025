@@ -44,10 +44,10 @@ public class Drive implements Subsystem {
         right_front.resetEncoder();
         left_back.resetEncoder();
         right_back.resetEncoder();
-        left_front.setRunMode(MotorEx.RunMode.RawPower);
-        right_front.setRunMode(MotorEx.RunMode.RawPower);
-        left_back.setRunMode(MotorEx.RunMode.RawPower);
-        right_back.setRunMode(MotorEx.RunMode.RawPower);
+        left_front.setRunMode(MotorEx.RunMode.VelocityControl);
+        right_front.setRunMode(MotorEx.RunMode.VelocityControl);
+        left_back.setRunMode(MotorEx.RunMode.VelocityControl);
+        right_back.setRunMode(MotorEx.RunMode.VelocityControl);
 
         drive = new MecanumDrive(
                 left_front,

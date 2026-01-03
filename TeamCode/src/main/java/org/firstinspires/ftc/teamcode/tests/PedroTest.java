@@ -23,7 +23,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Odometry;
 
 @Autonomous
-@Disabled
 public class PedroTest extends CommandOpMode {
     private Follower follower;
 

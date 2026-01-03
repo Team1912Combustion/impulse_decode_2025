@@ -26,9 +26,12 @@ public class Constants {
             .useSecondaryHeadingPIDF(false)
             .useSecondaryDrivePIDF(false)
             .centripetalScaling(0.0005)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.09, 0, 0.001, 0.027))
-            .headingPIDFCoefficients(new PIDFCoefficients(1, 0, 0.002, 0.025))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.1, 0, 0, 0.6, 0));
+            .translationalPIDFCoefficients(new PIDFCoefficients(
+                    0.08, 0, 0.001, 0.001))
+            .headingPIDFCoefficients(new PIDFCoefficients(
+                    0.55, 0, 0.002, 0.025))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(
+                    0.006, 0, 0.001, 0.3, 0.0005));
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .leftFrontMotorName("leftFront")
@@ -68,9 +71,9 @@ public class Constants {
 
     public static PathConstraints pathConstraints = new PathConstraints(
             0.995,
-            500,
-            1,
-            1
+            100,
+            1.5,
+            0.5
     );
 
     public static Follower createFollower(HardwareMap hardwareMap) {
@@ -85,7 +88,8 @@ public class Constants {
 class DistroConstants {
     public static FollowerConstants followerConstants = new FollowerConstants();
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(
+            0.99, 100, 1, 1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
