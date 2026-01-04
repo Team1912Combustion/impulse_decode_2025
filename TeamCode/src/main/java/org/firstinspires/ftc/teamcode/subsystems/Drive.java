@@ -11,6 +11,7 @@ import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.drivebase.MecanumDrive;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.utils.PyroMecanum;
 
 import org.firstinspires.ftc.teamcode.subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
@@ -19,7 +20,7 @@ import java.util.function.DoubleSupplier;
 
 public class Drive implements Subsystem {
 
-    public MecanumDrive drive = null;
+    public PyroMecanum drive = null;
 
     private MotorEx left_front = null;
     private MotorEx left_back = null;
@@ -49,7 +50,7 @@ public class Drive implements Subsystem {
         left_back.setRunMode(MotorEx.RunMode.VelocityControl);
         right_back.setRunMode(MotorEx.RunMode.VelocityControl);
 
-        drive = new MecanumDrive(
+        drive = new PyroMecanum(
                 left_front,
                 right_front,
                 left_back,
