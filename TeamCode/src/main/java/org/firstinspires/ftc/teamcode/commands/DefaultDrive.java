@@ -16,20 +16,26 @@ import java.util.function.DoubleSupplier;
 public class DefaultDrive extends CommandBase {
 
     private final Drive drive;
-    private final GamepadEx joystick;
+    private DoubleSupplier fwd;
+    private DoubleSupplier str;
+    private DoubleSupplier rot;
+    private BooleanSupplier field;
 
-    public DefaultDrive(Drive m_drive, GamepadEx m_joystick) {
+    public DefaultDrive(Drive m_drive, DoubleSupplier m_fwd, DoubleSupplier m_str, DoubleSupplier m_rot, BooleanSupplier m_field) {
         drive = m_drive;
-        joystick = m_joystick;
+        fwd = m_fwd;
+        str = m_str;
+        rot = m_rot;
+        field = m_field;
         addRequirements(drive);
     }
 
     @Override
     public void execute() {
-        if (joystick.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
-            drive.driveField(-1.*joystick.getLeftY(), -1.*joystick.getLeftX(), -1.*joystick.getRightX());
-        }  else {
-            drive.drive(-1.*joystick.getLeftY(), -1.*joystick.getLeftX(), -1.*joystick.getRightX());
+        if (field.getAsBoolean()) {
+            drive.driveField(fwd.getAsDouble(), str.getAsDouble(), rot.getAsDouble());
+        } else {
+            drive.drive(fwd.getAsDouble(), str.getAsDouble(), rot.getAsDouble());
         }
     }
 

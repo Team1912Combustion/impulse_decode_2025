@@ -14,14 +14,21 @@ public class TestDrive extends CommandOpMode {
 
     private GamepadEx joystick;
     private Drive drive;
+    private DefaultDrive defaultDrive;
     private Odometry odometry;
 
     @Override
     public void initialize() {
         joystick = new GamepadEx(gamepad1);
         odometry = new Odometry(hardwareMap, telemetry);
-        drive = new Drive(hardwareMap, odometry);
+        drive = new Drive(hardwareMap, odometry, telemetry);
+        defaultDrive = new DefaultDrive(drive,
+                ()->joystick.getLeftY(),
+                ()->joystick.getLeftX(),
+                ()->joystick.getRightX(),
+                ()->joystick.isDown(GamepadKeys.Button.LEFT_BUMPER));
         register(drive);
-        drive.setDefaultCommand( new DefaultDrive( drive, joystick) );
+        drive.setDefaultCommand( defaultDrive);
+        //schedule();
     }
 }

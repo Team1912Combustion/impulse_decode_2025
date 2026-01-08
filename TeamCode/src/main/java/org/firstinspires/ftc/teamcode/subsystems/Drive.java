@@ -11,6 +11,8 @@ import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.drivebase.MecanumDrive;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.PyroMecanum;
 
 import org.firstinspires.ftc.teamcode.subsystems.Odometry;
@@ -27,8 +29,9 @@ public class Drive implements Subsystem {
     private MotorEx right_front = null;
     private MotorEx right_back = null;
     private Odometry odometry = null;
+    private Telemetry telemetry = null;
 
-    public Drive(HardwareMap hardwareMap, Odometry m_odometry) {
+    public Drive(HardwareMap hardwareMap, Odometry m_odometry, Telemetry m_telemetry) {
         left_front  = new MotorEx(hardwareMap, "left_front");
         left_back   = new MotorEx(hardwareMap, "left_back");
         right_front = new MotorEx(hardwareMap, "right_front");
@@ -58,6 +61,7 @@ public class Drive implements Subsystem {
         );
 
         odometry = m_odometry;
+        telemetry = m_telemetry;
     }
 
     public Command stop() {
@@ -131,9 +135,15 @@ public class Drive implements Subsystem {
     }
 
     public void drive(double fwd, double str, double rot) {
+        telemetry.addData("Drive drive f:s:r",
+                "%f:%f:%f", fwd, str, rot);
+        telemetry.update();
         drive.driveRobotCentric(str, fwd, rot);
     }
     public void driveField(double fwd, double str, double rot) {
+        telemetry.addData("Drive drive f:s:r",
+                "%f:%f:%f", fwd, str, rot);
+        telemetry.update();
         drive.driveFieldCentric(str, fwd, rot, odometry.getRot());
     }
 

@@ -11,6 +11,7 @@ import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.RunCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
@@ -113,18 +114,16 @@ public class PedroTest extends CommandOpMode {
         Intake intake = new Intake(hardwareMap);
         Catapult catapult = new Catapult(hardwareMap);
         Odometry odometry = new Odometry(hardwareMap, telemetry);
-        Drive drive = new Drive(hardwareMap, odometry);
+        Drive drive = new Drive(hardwareMap, odometry, telemetry);
 
         // Schedule the autonomous sequence
-        schedule(
+        SequentialCommandGroup auto = new SequentialCommandGroup(
                 new RunCommand(() -> follower.update()),
                 // Score preload
                 catapult.launch(),
-                new WaitCommand(100), // Wait 1 second
                 catapult.load(),
                 new WaitCommand(1000), // Wait 1 second
-                catapult.launch(),
-                new WaitCommand(100), // Wait 1 second
+                catapult.hold(),
 
                 // First pickup cycle
                 new FollowPathCommand(follower, toRowOne),
@@ -174,6 +173,7 @@ public class PedroTest extends CommandOpMode {
                 new FollowPathCommand(follower, park, false), // park with holdEnd false
                 catapult.load()
         );
+        schedule(auto);
     }
 
     @Override

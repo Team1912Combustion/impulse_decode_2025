@@ -44,9 +44,13 @@ public class TestTeleop extends CommandOpMode {
         //toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(lift.run_tip());
 
         odometry = new Odometry(hardwareMap, telemetry);
-        drive = new Drive(hardwareMap, odometry);
+        drive = new Drive(hardwareMap, odometry, telemetry);
         register(drive);
-        drive.setDefaultCommand( new DefaultDrive( drive, joystick) );
+                drive.setDefaultCommand(new DefaultDrive(drive,
+                ()->joystick.getLeftY(),
+                ()->joystick.getLeftX(),
+                ()->joystick.getRightX(),
+                ()->joystick.isDown(GamepadKeys.Button.LEFT_BUMPER)));
         joystick.getGamepadButton(GamepadKeys.Button.B).whileHeld(intake.intake_out());
         joystick.getGamepadButton(GamepadKeys.Button.X).whileHeld(intake.intake_in());
 

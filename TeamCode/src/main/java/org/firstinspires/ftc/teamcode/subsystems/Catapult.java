@@ -42,14 +42,16 @@ public class Catapult implements Subsystem {
 
     public Command launch() {
         return new InstantCommand (this::set_launch,this)
-                                   .andThen(new WaitCommand(100));
+                                   .andThen(new WaitCommand(100))
+                                .andThen(hold());
     }
     public Command hold() {
         return new InstantCommand (this::set_hold,this);
     }
     public Command load() {
         return new InstantCommand (this::set_load,this)
-                                   .andThen(new WaitCommand(100));
+                                   .andThen(new WaitCommand(100))
+                .andThen(hold());
     }
 
     public double getPosition() {
