@@ -4,19 +4,27 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.opmodes.auto.AutoSettings;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.ActiveOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Odometry;
+import org.firstinspires.ftc.teamcode.subsystems.PinPoint;
+import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
-
+import java.util.ArrayList;
 
 
 @Autonomous
-public class PedroTest extends LinearOpMode {
+public class PedroTest extends OpMode {
     private Follower follower;
 
     private Intake intake;
@@ -24,6 +32,8 @@ public class PedroTest extends LinearOpMode {
     private Drive drive;
     private Odometry odometry;
 
+    private int pathState;
+    private Timer pathTimer, actionTimer, opmodeTimer;
 
     // Poses
     private final Pose startPose = new Pose(56, 56, Math.toRadians(45));
@@ -40,6 +50,11 @@ public class PedroTest extends LinearOpMode {
     private PathChain toRowTwo, pickupRowTwo, scoreRowTwo;
     private PathChain toRowThree, pickupRowThree, scoreRowThree;
     private PathChain park;
+
+    final private ElapsedTime timer = new ElapsedTime();
+
+    ArrayList<Boolean> buttonArray = new ArrayList<>();
+    int booleanIncrementer = 0;
 
     public void buildPaths() {
         toRowOne = follower.pathBuilder()
@@ -92,8 +107,108 @@ public class PedroTest extends LinearOpMode {
                 .setLinearHeadingInterpolation(startPose.getHeading(), parkPose.getHeading())
                 .build();
     }
-    @Override
-    public void runOpMode() {
-        buildPaths();
 
-}}
+    private boolean ifPressed(boolean button) {
+        boolean output = false;
+        boolean buttonWas;
+        if (buttonArray.size() == booleanIncrementer) {
+            buttonArray.add(false);
+        }
+        buttonWas = buttonArray.get(booleanIncrementer);
+        if (button != buttonWas && buttonWas) {
+            output = true;
+        }
+        buttonArray.set(booleanIncrementer, button);
+        booleanIncrementer += 1;
+        return output;
+    }
+
+    public void autonomousPathUpdate() {
+        switch (pathState) {
+            case 0:
+                follower.followPath(toRowOne);
+                setPathState(1);
+                break;
+            case 1:
+
+            /* You could check for
+            - Follower State: "if(!follower.isBusy()) {}"
+            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
+            - Robot Position: "if(follower.getPose().getX() > 36) {}"
+            */
+
+            /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+            if(!follower.isBusy()) {
+                /* Score Preload */
+
+                /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                follower.followPath(pickupRowOne);
+                setPathState(2);
+            }
+            break;
+        case 2:
+            /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
+            if(!follower.isBusy()) {
+                /* Grab Sample */
+
+                /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                follower.followPath(scoreRowOne);
+                setPathState(3);
+            }
+            break;
+    }
+}
+
+/** These change the states of the paths and actions. It will also reset the timers of the individual switches **/
+public void setPathState(int pState) {
+    pathState = pState;
+    pathTimer.resetTimer();
+}
+
+    /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
+    @Override
+    public void loop() {
+
+        // These loop the movements of the robot, these must be called continuously in order to work
+        follower.update();
+        autonomousPathUpdate();
+
+        // Feedback to Driver Hub for debugging
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.update();
+    }
+
+    /** This method is called once at the init of the OpMode. **/
+    @Override
+    public void init() {
+        pathTimer = new Timer();
+        opmodeTimer = new Timer();
+        opmodeTimer.resetTimer();
+
+
+        follower = Constants.createFollower(hardwareMap);
+        buildPaths();
+        follower.setStartingPose(startPose);
+
+    }
+
+    /** This method is called continuously after Init while waiting for "play". **/
+    @Override
+    public void init_loop() {}
+
+    /** This method is called once at the start of the OpMode.
+     * It runs all the setup actions, including building paths and starting the path system **/
+    @Override
+    public void start() {
+        opmodeTimer.resetTimer();
+        setPathState(0);
+    }
+
+    /** We do not use this because everything should automatically disable **/
+    @Override
+    public void stop() {}
+
+}
