@@ -135,9 +135,9 @@ public class PedroTest extends OpMode {
                 while (timer.milliseconds() < 100) {}
                 Catapult.INSTANCE.hold();
                 follower.followPath(toRowOne);
-                Intake.INSTANCE.intakein();
                 setPathState(1);
                 break;
+
             case 1:
 
             /* You could check for
@@ -149,7 +149,7 @@ public class PedroTest extends OpMode {
             /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
             if(!follower.isBusy()) {
                 /* Score Preload */
-
+                Intake.INSTANCE.intakein();
                 /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                 follower.followPath(pickupRowOne);
                 Intake.INSTANCE.intakeoff();
@@ -203,10 +203,23 @@ public void setPathState(int pState) {
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
+        AutoSettings.INSTANCE.readAutoConfig();
+
+        telemetry.addData(">", "initializing hardware.");
+        telemetry.update();
+        Catapult.INSTANCE.init(hardwareMap);
+        Intake.INSTANCE.init(hardwareMap);
+        Vision.INSTANCE.setAlliance(AutoSettings.INSTANCE.iAmBlue());
+        telemetry.update();
+        telemetry.addData(">", "hardware init complete.");
 
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
+
+        telemetry.addData(">", "initialization complete.");
+        telemetry.update();
+
 
     }
 

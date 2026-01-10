@@ -23,7 +23,6 @@ public class Drive {
 
     private Drive() { }
 
-    private AutoDrive autoDrive;
     private Telemetry telemetry;
 
     private DcMotorEx left_front = null;
