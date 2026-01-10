@@ -126,7 +126,16 @@ public class PedroTest extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
+                timer.reset();
+                Catapult.INSTANCE.load();
+                while (timer.milliseconds() < 100) {}
+                Catapult.INSTANCE.launch();
+                while (timer.milliseconds() < 100) {}
+                Catapult.INSTANCE.load();
+                while (timer.milliseconds() < 100) {}
+                Catapult.INSTANCE.hold();
                 follower.followPath(toRowOne);
+                Intake.INSTANCE.intakein();
                 setPathState(1);
                 break;
             case 1:
@@ -143,6 +152,7 @@ public class PedroTest extends OpMode {
 
                 /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                 follower.followPath(pickupRowOne);
+                Intake.INSTANCE.intakeoff();
                 setPathState(2);
             }
             break;
@@ -153,6 +163,11 @@ public class PedroTest extends OpMode {
 
                 /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                 follower.followPath(scoreRowOne);
+                Catapult.INSTANCE.launch();
+                while (timer.milliseconds() < 100) {}
+                Catapult.INSTANCE.load();
+                while (timer.milliseconds() < 100) {}
+                Catapult.INSTANCE.hold();
                 setPathState(3);
             }
             break;
