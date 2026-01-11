@@ -129,13 +129,22 @@ public class PedroTest extends OpMode {
             case 00:
                 mywait(100);
                 Catapult.INSTANCE.load();
-                mywait(100);
+                mywait(200);
                 Catapult.INSTANCE.launch();
                 mywait(100);
-                Catapult.INSTANCE.load();
+                Intake.INSTANCE.intakein();
                 mywait(100);
+                Catapult.INSTANCE.load();
+                mywait(200);
+                Catapult.INSTANCE.launch();
+                mywait(500);
+                Catapult.INSTANCE.load();
+                mywait(200);
                 Catapult.INSTANCE.hold();
+                mywait(200);
+                Intake.INSTANCE.intakeoff();
                 setPathState(10);
+                break;
             case 10:
                 follower.followPath(toRowOne);
                 setPathState(11);
@@ -144,21 +153,28 @@ public class PedroTest extends OpMode {
                 if (!follower.isBusy()) {
                     // turn on intake before driving;
                     Intake.INSTANCE.intakein();
-                    mywait(100);
-                    follower.followPath(pickupRowOne);
                     setPathState(12);
                 }
                 break;
             case 12:
-                if (!follower.isBusy()) {
-                    // turn on intake before driving;
-                    Intake.INSTANCE.intakein();
-                    mywait(100);
-                    follower.followPath(scoreRowOne);
-                    setPathState(13);
-                }
+                follower.followPath(pickupRowOne);
+                setPathState(13);
                 break;
             case 13:
+                if (!follower.isBusy()) {
+                    // turn off intake before driving;
+                    Intake.INSTANCE.intakeoff();
+                    setPathState(14);
+                }
+                break;
+            case 14:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    follower.followPath(scoreRowOne);
+                    setPathState(15);
+                }
+                break;
+            case 15:
                 if (!follower.isBusy()) {
                     mywait(100);
                     Catapult.INSTANCE.load();
@@ -168,8 +184,9 @@ public class PedroTest extends OpMode {
                     Catapult.INSTANCE.load();
                     mywait(100);
                     Catapult.INSTANCE.hold();
-                    setPathState(21);
+                    setPathState(20);
                 }
+                break;
 
             case 20:
                 follower.followPath(toRowTwo);
@@ -179,21 +196,28 @@ public class PedroTest extends OpMode {
                 if (!follower.isBusy()) {
                     // turn on intake before driving;
                     Intake.INSTANCE.intakein();
-                    mywait(100);
-                    follower.followPath(pickupRowTwo);
                     setPathState(22);
                 }
                 break;
             case 22:
-                if (!follower.isBusy()) {
-                    // turn on intake before driving;
-                    Intake.INSTANCE.intakein();
-                    mywait(100);
-                    follower.followPath(scoreRowTwo);
-                    setPathState(23);
-                }
+                follower.followPath(pickupRowTwo);
+                setPathState(23);
                 break;
             case 23:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    Intake.INSTANCE.intakeoff();
+                    setPathState(24);
+                }
+                break;
+            case 24:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    follower.followPath(scoreRowTwo);
+                    setPathState(25);
+                }
+                break;
+            case 25:
                 if (!follower.isBusy()) {
                     mywait(100);
                     Catapult.INSTANCE.load();
@@ -203,8 +227,9 @@ public class PedroTest extends OpMode {
                     Catapult.INSTANCE.load();
                     mywait(100);
                     Catapult.INSTANCE.hold();
-                    setPathState(31);
+                    setPathState(30);
                 }
+                break;
 
             case 30:
                 follower.followPath(toRowThree);
@@ -238,8 +263,10 @@ public class PedroTest extends OpMode {
                     Catapult.INSTANCE.load();
                     mywait(100);
                     Catapult.INSTANCE.hold();
+                    setPathState(99);
                 }
                 break;
+
             default:
                Catapult.INSTANCE.hold();
                Intake.INSTANCE.intakeoff();
@@ -288,6 +315,7 @@ public class PedroTest extends OpMode {
         opmodeTimer.resetTimer();
 
         AutoSettings.INSTANCE.readAutoConfig();
+        Drive.INSTANCE.init(hardwareMap);
 
         telemetry.addData(">", "initializing hardware.");
         telemetry.update();
