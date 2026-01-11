@@ -51,7 +51,7 @@ public class PedroTest extends OpMode {
     private PathChain toRowThree, pickupRowThree, scoreRowThree;
     private PathChain park;
 
-    final private ElapsedTime timer = new ElapsedTime();
+    final private ElapsedTime mytimer = new ElapsedTime();
 
     ArrayList<Boolean> buttonArray = new ArrayList<>();
     int booleanIncrementer = 0;
@@ -125,60 +125,144 @@ public class PedroTest extends OpMode {
 
     public void autonomousPathUpdate() {
         switch (pathState) {
-            case 0:
-                timer.reset();
-                Catapult.INSTANCE.load();
-                while (timer.milliseconds() < 100) {}
-                Catapult.INSTANCE.launch();
-                while (timer.milliseconds() < 100) {}
-                Catapult.INSTANCE.load();
-                while (timer.milliseconds() < 100) {}
-                Catapult.INSTANCE.hold();
-                follower.followPath(toRowOne);
-                setPathState(1);
-                break;
 
-            case 1:
+            case 00:
+                mywait(100);
+                Catapult.INSTANCE.load();
+                mywait(100);
+                Catapult.INSTANCE.launch();
+                mywait(100);
+                Catapult.INSTANCE.load();
+                mywait(100);
+                Catapult.INSTANCE.hold();
+                setPathState(10);
+            case 10:
+                follower.followPath(toRowOne);
+                setPathState(11);
+                break;
+            case 11:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    Intake.INSTANCE.intakein();
+                    mywait(100);
+                    follower.followPath(pickupRowOne);
+                    setPathState(12);
+                }
+                break;
+            case 12:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    Intake.INSTANCE.intakein();
+                    mywait(100);
+                    follower.followPath(scoreRowOne);
+                    setPathState(13);
+                }
+                break;
+            case 13:
+                if (!follower.isBusy()) {
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(100);
+                    Catapult.INSTANCE.launch();
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(100);
+                    Catapult.INSTANCE.hold();
+                    setPathState(21);
+                }
+
+            case 20:
+                follower.followPath(toRowTwo);
+                setPathState(21);
+                break;
+            case 21:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    Intake.INSTANCE.intakein();
+                    mywait(100);
+                    follower.followPath(pickupRowTwo);
+                    setPathState(22);
+                }
+                break;
+            case 22:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    Intake.INSTANCE.intakein();
+                    mywait(100);
+                    follower.followPath(scoreRowTwo);
+                    setPathState(23);
+                }
+                break;
+            case 23:
+                if (!follower.isBusy()) {
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(100);
+                    Catapult.INSTANCE.launch();
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(100);
+                    Catapult.INSTANCE.hold();
+                    setPathState(31);
+                }
+
+            case 30:
+                follower.followPath(toRowThree);
+                setPathState(31);
+                break;
+            case 31:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    Intake.INSTANCE.intakein();
+                    mywait(100);
+                    follower.followPath(pickupRowThree);
+                    setPathState(32);
+                }
+                break;
+            case 32:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    Intake.INSTANCE.intakein();
+                    mywait(100);
+                    follower.followPath(scoreRowThree);
+                    setPathState(33);
+                }
+                break;
+            case 33:
+                if (!follower.isBusy()) {
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(100);
+                    Catapult.INSTANCE.launch();
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(100);
+                    Catapult.INSTANCE.hold();
+                }
+                break;
+            default:
+               Catapult.INSTANCE.hold();
+               Intake.INSTANCE.intakeoff();
+               Drive.INSTANCE.stop();
 
             /* You could check for
             - Follower State: "if(!follower.isBusy()) {}"
             - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
             - Robot Position: "if(follower.getPose().getX() > 36) {}"
             */
-
-            /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-            if(!follower.isBusy()) {
-                /* Score Preload */
-                Intake.INSTANCE.intakein();
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                follower.followPath(pickupRowOne);
-                Intake.INSTANCE.intakeoff();
-                setPathState(2);
-            }
-            break;
-        case 2:
-            /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
-            if(!follower.isBusy()) {
-                /* Grab Sample */
-
-                /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                follower.followPath(scoreRowOne);
-                Catapult.INSTANCE.launch();
-                while (timer.milliseconds() < 100) {}
-                Catapult.INSTANCE.load();
-                while (timer.milliseconds() < 100) {}
-                Catapult.INSTANCE.hold();
-                setPathState(3);
-            }
-            break;
+        }
     }
-}
 
-/** These change the states of the paths and actions. It will also reset the timers of the individual switches **/
-public void setPathState(int pState) {
-    pathState = pState;
-    pathTimer.resetTimer();
-}
+    public void mywait(int msec) {
+        mytimer.reset();
+        while(mytimer.milliseconds() < msec) {}
+    }
+
+    /** These change the states of the paths and actions. It will also reset the timers of the individual switches **/
+    public void setPathState(int pState) {
+        pathState = pState;
+        pathTimer.resetTimer();
+    }
 
     /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
     @Override
