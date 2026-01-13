@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -37,12 +38,12 @@ public class PedroTest extends OpMode {
 
     // Poses
     private final Pose startPose = new Pose(56, 56, Math.toRadians(45));
-    private final Pose rowOneStart = new Pose(12, 24, Math.toRadians(90));
-    private final Pose rowOneDone = new Pose(12, 48, Math.toRadians(90));
-    private final Pose rowTwoStart = new Pose(-12, 24, Math.toRadians(90));
-    private final Pose rowTwoDone = new Pose(-12, 48, Math.toRadians(90));
-    private final Pose rowThreeStart = new Pose(-36, 24, Math.toRadians(90));
-    private final Pose rowThreeDone = new Pose(-36, 48, Math.toRadians(90));
+    private final Pose rowOneStart = new Pose(14, 24, Math.toRadians(90));
+    private final Pose rowOneDone = new Pose(14, 54, Math.toRadians(90));
+    private final Pose rowTwoStart = new Pose(-11, 24, Math.toRadians(90));
+    private final Pose rowTwoDone = new Pose(-11, 54, Math.toRadians(90));
+    private final Pose rowThreeStart = new Pose(-33.5, 24, Math.toRadians(90));
+    private final Pose rowThreeDone = new Pose(-33.5, 54, Math.toRadians(90));
     private final Pose parkPose = new Pose(56, 24, Math.toRadians(-90));
 
     // Path chains
@@ -80,10 +81,11 @@ public class PedroTest extends OpMode {
         pickupRowTwo = follower.pathBuilder()
                 .addPath(new BezierLine(rowTwoStart, rowTwoDone))
                 .setLinearHeadingInterpolation(rowTwoStart.getHeading(), rowTwoDone.getHeading())
+                .setVelocityConstraint(0.5)
                 .build();
 
         scoreRowTwo = follower.pathBuilder()
-                .addPath(new BezierLine(rowTwoDone, startPose))
+                .addPath(new BezierCurve(rowTwoDone, rowOneStart, startPose))
                 .setLinearHeadingInterpolation(rowTwoDone.getHeading(), startPose.getHeading())
                 .build();
 
@@ -135,7 +137,7 @@ public class PedroTest extends OpMode {
                 Intake.INSTANCE.intakein();
                 mywait(100);
                 Catapult.INSTANCE.load();
-                mywait(200);
+                mywait(220);
                 Catapult.INSTANCE.launch();
                 mywait(500);
                 Catapult.INSTANCE.load();
