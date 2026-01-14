@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 import java.util.ArrayList;
 
-@Autonomous(name="AutoSelect", group="Robot", preselectTeleOp = "PyroTeleArcade")
+@Autonomous(name="AutoSelect", preselectTeleOp = "runTeleop")
 public class AutoSelect extends LinearOpMode
 {
 
@@ -88,6 +88,13 @@ public class AutoSelect extends LinearOpMode
 
         timer.reset();
         //while (opModeIsActive() & timer.seconds() < 3.) { }
+
+        if (AutoSettings.INSTANCE.atGoal()) {
+            AtGoal.init(hardwareMap, telemetry, AutoSettings.INSTANCE.I_AM_BLUE);
+            AtGoal.run();
+        } else {
+            AtWall.run();
+        }
 
         //backdropPixel.update(autoSettings.iAmBlue());
         //doubleVision.update(autoSettings.iAmBlue(), autoSettings.rightShift(), autoSettings.leftShift());
