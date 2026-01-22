@@ -15,7 +15,9 @@ public class AutoSettings {
     private String filename = "AutoConfig.json";
     private AutoConfig myAutoConfig = new AutoConfig();
 
+    public int ROW_COUNT = 1;
     public boolean I_AM_BLUE = false;
+    public boolean SHOOT_LAST = false;
     public boolean AT_GOAL = true;
     /*
     public boolean GO_PIXEL = true;
@@ -27,6 +29,8 @@ public class AutoSettings {
     public boolean LEFT_SHIFT = true;
     */
 
+    public int rowCount() { return ROW_COUNT; }
+    public boolean shootLast() { return SHOOT_LAST; }
     public boolean iAmBlue() { return I_AM_BLUE; }
     public boolean atGoal() { return AT_GOAL; }
     /*
@@ -40,7 +44,9 @@ public class AutoSettings {
 
     public void pushToAutoConfig () {
         myAutoConfig.I_AM_BLUE = I_AM_BLUE;
+        myAutoConfig.SHOOT_LAST = SHOOT_LAST;
         myAutoConfig.AT_GOAL = AT_GOAL;
+        myAutoConfig.ROW_COUNT = ROW_COUNT;
         /*
         myAutoConfig.GO_BACKDROP = GO_BACKDROP;
         myAutoConfig.GO_PARK = GO_PARK;
@@ -54,6 +60,8 @@ public class AutoSettings {
     public void pullFromAutoConfig () {
         I_AM_BLUE     = myAutoConfig.I_AM_BLUE;
         AT_GOAL       = myAutoConfig.AT_GOAL;
+        SHOOT_LAST    = myAutoConfig.SHOOT_LAST;
+        ROW_COUNT     = myAutoConfig.ROW_COUNT;
         /*
         GO_BACKDROP   = myAutoConfig.GO_BACKDROP;
         GO_PARK       = myAutoConfig.GO_PARK;
@@ -65,7 +73,9 @@ public class AutoSettings {
     }
     public void copyToAutoConfig(AutoConfig tmpAutoConfig) {
         myAutoConfig.I_AM_BLUE     = tmpAutoConfig.I_AM_BLUE;
+        myAutoConfig.SHOOT_LAST    = tmpAutoConfig.SHOOT_LAST;
         myAutoConfig.AT_GOAL       = tmpAutoConfig.AT_GOAL;
+        myAutoConfig.ROW_COUNT     = tmpAutoConfig.ROW_COUNT;
         /*
         myAutoConfig.GO_BACKDROP   = tmpAutoConfig.GO_BACKDROP;
         myAutoConfig.GO_PARK       = tmpAutoConfig.GO_PARK;
@@ -95,7 +105,9 @@ public class AutoSettings {
 class AutoConfig implements Cloneable
 {
     public boolean I_AM_BLUE = true;
+    public boolean SHOOT_LAST = false;
     public boolean AT_GOAL = true;
+    public int ROW_COUNT = 1;
     /*
     public boolean GO_BACKDROP = true;
     public boolean GO_PARK = true;

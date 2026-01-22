@@ -51,8 +51,6 @@ public class AutoSelect extends LinearOpMode
         telemetry.update();
 
         while (!isStarted()) {
-            String myAlliance   = AutoSettings.INSTANCE.iAmBlue() ? "Blue" : "Red";
-            String myPosition   = AutoSettings.INSTANCE.atGoal() ? "AtGoal" : "AtWall";
 
 
             boolean g1xPressed = ifPressed(gamepad1.x);
@@ -64,7 +62,14 @@ public class AutoSelect extends LinearOpMode
 
             if (g1dpuPressed) { AutoSettings.INSTANCE.I_AM_BLUE = !AutoSettings.INSTANCE.I_AM_BLUE; }
             if (g1dplPressed) { AutoSettings.INSTANCE.AT_GOAL = !AutoSettings.INSTANCE.AT_GOAL; }
+            if (g1dprPressed) {
+                AutoSettings.INSTANCE.ROW_COUNT = (AutoSettings.INSTANCE.ROW_COUNT + 1) % 4;
+            }
             // if (g1dplPressed) { incTurnPos(); }
+
+            String myAlliance   = AutoSettings.INSTANCE.iAmBlue() ? "Blue" : "Red";
+            String myPosition   = AutoSettings.INSTANCE.atGoal() ? "AtGoal" : "AtWall";
+            int myRowCount   = AutoSettings.INSTANCE.rowCount();
 
             if (booleanIncrementer != 0) {
                 AutoSettings.INSTANCE.saveAutoConfig();
@@ -78,6 +83,7 @@ public class AutoSelect extends LinearOpMode
 
             telemetry.addData("Alliance Color (Dpad Up): ", myAlliance);
             telemetry.addData("Start Position (Dpad Left): ", myPosition);
+            telemetry.addData("Rows to intake (Dpad Right): ", myRowCount);
             telemetry.addData("Obelisk Tag ID: ", Vision.INSTANCE.getObeliskTag());
             telemetry.addLine(" ");
 
@@ -90,9 +96,14 @@ public class AutoSelect extends LinearOpMode
         //while (opModeIsActive() & timer.seconds() < 3.) { }
 
         if (AutoSettings.INSTANCE.atGoal()) {
-            AtGoal.init(hardwareMap, telemetry, AutoSettings.INSTANCE.I_AM_BLUE);
+            AtGoal.init(hardwareMap, telemetry,
+                    AutoSettings.INSTANCE.I_AM_BLUE,
+                    AutoSettings.INSTANCE.ROW_COUNT);
             AtGoal.run();
         } else {
+            AtWall.init(hardwareMap, telemetry,
+                    AutoSettings.INSTANCE.I_AM_BLUE,
+                    AutoSettings.INSTANCE.SHOOT_LAST);
             AtWall.run();
         }
 

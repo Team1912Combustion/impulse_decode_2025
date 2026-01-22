@@ -26,33 +26,60 @@ public class AtWall {
     private static Follower follower;
     private static int pathState;
     private static Telemetry telemetry;
+    private static boolean SHOOT_LAST = false;
+    private static boolean I_AM_BLUE = false;
 
     private static Timer pathTimer, actionTimer, opmodeTimer;
 
     private static Pose startPose = null;
     private static PathChain park;
+    private static PathChain goal;
 
     private static ElapsedTime waittimer = new ElapsedTime();
 
     ArrayList<Boolean> buttonArray = new ArrayList<>();
     int booleanIncrementer = 0;
 
-    public static void buildPaths(boolean I_AM_BLUE) {
+    public static void buildPaths() {
 
         // Poses
         Pose parkPose = null;
+        Pose goalPose = null;
 
         // Poses
         if (I_AM_BLUE) {
-            parkPose = new Pose(-48, -24, Math.toRadians(0));
+            goalPose = new Pose(56, -56, Math.toRadians(-45));
+            if (SHOOT_LAST) {
+                parkPose = new Pose(56, -24, Math.toRadians(90));
+            } else {
+                parkPose = new Pose(-48, -24, Math.toRadians(0));
+            }
         } else {
-            parkPose = new Pose(-48, 24, Math.toRadians(0));
+            goalPose = new Pose(56, 56, Math.toRadians(45));
+            if (SHOOT_LAST) {
+                parkPose = new Pose(56, 24, Math.toRadians(90));
+            } else {
+                parkPose = new Pose(-48, 24, Math.toRadians(0));
+            }
         }
 
-        park = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, parkPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(), parkPose.getHeading())
+        if (SHOOT_LAST) {
+            park = follower.pathBuilder()
+                    .addPath(new BezierLine(goalPose, parkPose))
+                    .setLinearHeadingInterpolation(goalPose.getHeading(), parkPose.getHeading())
+                    .build();
+        } else {
+            park = follower.pathBuilder()
+                    .addPath(new BezierLine(startPose, parkPose))
+                    .setLinearHeadingInterpolation(startPose.getHeading(), parkPose.getHeading())
+                    .build();
+        }
+
+        goal = follower.pathBuilder()
+                .addPath(new BezierLine(startPose, goalPose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), goalPose.getHeading())
                 .build();
+
     }
 
     public static void autonomousPathUpdate(Follower follower, int pathState) {
@@ -64,10 +91,35 @@ public class AtWall {
                 mywait(100);
                 Catapult.INSTANCE.hold();
                 mywait(20000);
-                follower.followPath(park);
-                setPathState(10);
+                if (SHOOT_LAST) {
+                    follower.followPath(goal);
+                    setPathState(10);
+                } else {
+                  follower.followPath(park);
+                  setPathState(91);
+                }
                 break;
             case 10:
+                if (!follower.isBusy()) {
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(100);
+                    Catapult.INSTANCE.launch();
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(100);
+                    Catapult.INSTANCE.hold();
+                    setPathState(90);
+                }
+                break;
+
+            case 90:
+                // turn off intake before parking;
+                Intake.INSTANCE.intakeoff();
+                follower.followPath(park);
+                setPathState(91);
+                break;
+            case 91:
                 if (!follower.isBusy()) {
                     setPathState(99);
                 }
@@ -96,11 +148,14 @@ public class AtWall {
         pathTimer.resetTimer();
     }
 
-    public static void init(HardwareMap hardwareMap, Telemetry m_telemetry, boolean I_AM_BLUE) {
+    public static void init(HardwareMap hardwareMap, Telemetry m_telemetry,
+                            boolean m_I_AM_BLUE,
+                            boolean m_SHOOT_LAST) {
+        I_AM_BLUE = m_I_AM_BLUE;
+        SHOOT_LAST = m_SHOOT_LAST;
+
         telemetry = m_telemetry;
         waittimer.reset();
-
-        AutoSettings.INSTANCE.readAutoConfig();
 
         Drive.INSTANCE.init(hardwareMap);
         Catapult.INSTANCE.init(hardwareMap);
@@ -115,8 +170,9 @@ public class AtWall {
         } else {
             startPose = new Pose(-63, 24, Math.toRadians(0));
         }
-        buildPaths(I_AM_BLUE);
+        buildPaths();
         follower.setStartingPose(startPose);
+        pathState = 0;
         telemetry.addData(">", "initialization complete.");
         telemetry.update();
     }

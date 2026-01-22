@@ -48,6 +48,8 @@ public class AtGoal {
     ArrayList<Boolean> buttonArray = new ArrayList<>();
     int booleanIncrementer = 0;
 
+    private static int rowCount = 0;
+
     public static void buildPaths(boolean I_AM_BLUE) {
 
         // Poses
@@ -133,6 +135,7 @@ public class AtGoal {
     public static void autonomousPathUpdate(Follower follower, int pathState) {
         switch (pathState) {
 
+            // preload
             case 00:
                 mywait(100);
                 Catapult.INSTANCE.load();
@@ -150,8 +153,14 @@ public class AtGoal {
                 Catapult.INSTANCE.hold();
                 mywait(200);
                 Intake.INSTANCE.intakeoff();
-                setPathState(10);
+                if (rowCount > 0) {
+                    setPathState(10);
+                } else {
+                    setPathState(90);
+                }
                 break;
+
+            // row 1
             case 10:
                 follower.followPath(toRowOne);
                 setPathState(11);
@@ -191,10 +200,15 @@ public class AtGoal {
                     Catapult.INSTANCE.load();
                     mywait(100);
                     Catapult.INSTANCE.hold();
-                    setPathState(20);
+                    if (rowCount > 1) {
+                        setPathState(20);
+                    } else {
+                        setPathState(90);
+                    }
                 }
                 break;
 
+            // row 2
             case 20:
                 follower.followPath(toRowTwo);
                 setPathState(21);
@@ -234,10 +248,15 @@ public class AtGoal {
                     Catapult.INSTANCE.load();
                     mywait(100);
                     Catapult.INSTANCE.hold();
-                    setPathState(30);
+                    if (rowCount > 2) {
+                        setPathState(30);
+                    } else {
+                        setPathState(90);
+                    }
                 }
                 break;
 
+            // row 3
             case 30:
                 follower.followPath(toRowThree);
                 setPathState(31);
@@ -270,6 +289,19 @@ public class AtGoal {
                     Catapult.INSTANCE.load();
                     mywait(100);
                     Catapult.INSTANCE.hold();
+                    setPathState(90);
+                }
+                break;
+
+            // park
+            case 90:
+                // turn off intake before parking;
+                Intake.INSTANCE.intakeoff();
+                follower.followPath(park);
+                setPathState(91);
+                break;
+            case 91:
+                if (!follower.isBusy()) {
                     setPathState(99);
                 }
                 break;
@@ -297,11 +329,12 @@ public class AtGoal {
         pathTimer.resetTimer();
     }
 
-    public static void init(HardwareMap hardwareMap, Telemetry m_telemetry, boolean I_AM_BLUE) {
+    public static void init(HardwareMap hardwareMap, Telemetry m_telemetry,
+                            boolean I_AM_BLUE,
+                            int m_rowCount) {
         telemetry = m_telemetry;
+        rowCount = m_rowCount;
         waittimer.reset();
-
-        AutoSettings.INSTANCE.readAutoConfig();
 
         Drive.INSTANCE.init(hardwareMap);
         Catapult.INSTANCE.init(hardwareMap);
@@ -318,7 +351,8 @@ public class AtGoal {
         }
         buildPaths(I_AM_BLUE);
         follower.setStartingPose(startPose);
-        telemetry.addData(">", "initialization complete.");
+        pathState = 0;
+        telemetry.addData(">", "atGoal init complete.");
         telemetry.update();
     }
 
