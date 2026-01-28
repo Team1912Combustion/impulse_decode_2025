@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.subsystems.PinPoint;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
-@TeleOp(name = "Teleop")
+@TeleOp(name = "JustDrive")
 public class JustDrive extends OpMode {
 
 

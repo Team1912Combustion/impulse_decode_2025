@@ -20,8 +20,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 import java.util.ArrayList;
 
-
-@Autonomous
 public class AtWall {
     private static Follower follower;
     private static int pathState;

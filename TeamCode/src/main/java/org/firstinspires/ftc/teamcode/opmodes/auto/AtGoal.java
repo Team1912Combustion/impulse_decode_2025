@@ -21,14 +21,12 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 import java.util.ArrayList;
 
-
-@Autonomous
 public class AtGoal {
     private static Follower follower;
     private static int pathState;
     private static Telemetry telemetry;
 
-    private static Timer pathTimer, actionTimer, opmodeTimer;
+    private static Timer pathTimer;
 
     private static Pose startPose = null;
     // Path chains
@@ -335,6 +333,8 @@ public class AtGoal {
         telemetry = m_telemetry;
         rowCount = m_rowCount;
         waittimer.reset();
+        pathTimer = new Timer();
+        pathTimer.resetTimer();
 
         Drive.INSTANCE.init(hardwareMap);
         Catapult.INSTANCE.init(hardwareMap);
@@ -352,6 +352,7 @@ public class AtGoal {
         buildPaths(I_AM_BLUE);
         follower.setStartingPose(startPose);
         pathState = 0;
+        setPathState(0);
         telemetry.addData(">", "atGoal init complete.");
         telemetry.update();
     }
@@ -370,13 +371,6 @@ public class AtGoal {
             telemetry.addData("heading", follower.getPose().getHeading());
             telemetry.update();
         }
-    }
-
-    /** This method is called once at the start of the OpMode.
-     * It runs all the setup actions, including building paths and starting the path system **/
-    public void start() {
-        opmodeTimer.resetTimer();
-        setPathState(0);
     }
 
     /** We do not use this because everything should automatically disable **/

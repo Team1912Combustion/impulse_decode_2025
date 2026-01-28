@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.PinPoint;
 import org.firstinspires.ftc.teamcode.utils.Pose2d;
 
-@TeleOp(group = "Test", name = "PinPoint")
+@TeleOp(name = "TestPinPoint")
 public class TestPinPoint extends OpMode {
 
     @Override

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 
-@TeleOp(group = "Test", name = "TestCatapult")
+@TeleOp(name = "TestCatapult")
 public class TestCatapult extends OpMode {
 
     @Override
