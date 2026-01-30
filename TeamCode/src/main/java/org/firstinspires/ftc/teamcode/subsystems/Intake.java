@@ -11,7 +11,7 @@ public class Intake {
     private String motor_name = "intake_motor";
     public DcMotorEx intake_motor;
 
-    private double INTAKE_IN_POWER = .9;
+    private double INTAKE_IN_POWER = 69 ;
     private double INTAKE_OUT_POWER = -0.7;
     private double INTAKE_OFF_POWER = 0.0;
 

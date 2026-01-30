@@ -61,21 +61,22 @@ public class AtGoal {
 
         // Poses
         if (I_AM_BLUE) {
-           rowOneStart = new Pose(14, -24, Math.toRadians(-90));
-           rowOneDone = new Pose(14, -54, Math.toRadians(-90));
-           rowTwoStart = new Pose(-11, -24, Math.toRadians(-90));
-           rowTwoDone = new Pose(-11, -54, Math.toRadians(-90));
-           rowThreeStart = new Pose(-33.5, -24, Math.toRadians(-90));
-           rowThreeDone = new Pose(-33.5, -54, Math.toRadians(-90));
-           parkPose = new Pose(56, -24, Math.toRadians(90));
+            rowOneStart = new Pose(18.2, 24, Math.toRadians(90));
+            rowOneDone = new Pose(18.2, 54, Math.toRadians(90));
+            rowTwoStart = new Pose(-4, 24, Math.toRadians(90));
+            rowTwoDone = new Pose(-4, 54, Math.toRadians(90));
+            rowThreeStart = new Pose(-27, 24, Math.toRadians(90));
+            rowThreeDone = new Pose(-27, 54, Math.toRadians(90));
+            parkPose = new Pose(54, 24, Math.toRadians(-90));
         } else {
-            rowOneStart = new Pose(14, 24, Math.toRadians(90));
-            rowOneDone = new Pose(14, 54, Math.toRadians(90));
-            rowTwoStart = new Pose(-11, 24, Math.toRadians(90));
-            rowTwoDone = new Pose(-11, 54, Math.toRadians(90));
-            rowThreeStart = new Pose(-33.5, 24, Math.toRadians(90));
-            rowThreeDone = new Pose(-33.5, 54, Math.toRadians(90));
-            parkPose = new Pose(56, 24, Math.toRadians(-90));
+
+            rowOneStart = new Pose(18.2, -24, Math.toRadians(-90));
+            rowOneDone = new Pose(18.2, -54, Math.toRadians(-90));
+            rowTwoStart = new Pose(-4, -24, Math.toRadians(-90));
+            rowTwoDone = new Pose(-4, -54, Math.toRadians(-90));
+            rowThreeStart = new Pose(-27, -24, Math.toRadians(-90));
+            rowThreeDone = new Pose(-27, -54, Math.toRadians(-90));
+            parkPose = new Pose(54, -24, Math.toRadians(90));
         }
 
         toRowOne = follower.pathBuilder()
@@ -345,9 +346,9 @@ public class AtGoal {
         telemetry.addData(">", "hardware init complete.");
         follower = Constants.createFollower(hardwareMap);
         if (I_AM_BLUE) {
-            startPose = new Pose(56, -56, Math.toRadians(-45));
-        } else {
             startPose = new Pose(56, 56, Math.toRadians(45));
+        } else {
+            startPose = new Pose(56, -56, Math.toRadians(-45));
         }
         buildPaths(I_AM_BLUE);
         follower.setStartingPose(startPose);
