@@ -41,6 +41,8 @@ public class AtGoal {
     private static PathChain scoreRowThree;
     private static PathChain park;
 
+    private static PathChain toLaunch;
+
     private static ElapsedTime waittimer = new ElapsedTime();
 
     ArrayList<Boolean> buttonArray = new ArrayList<>();
@@ -58,30 +60,37 @@ public class AtGoal {
         Pose rowThreeStart = null;
         Pose rowThreeDone = null;
         Pose parkPose = null;
+        Pose launchPose = null;
 
         // Poses
         if (I_AM_BLUE) {
-            rowOneStart = new Pose(18.2, 24, Math.toRadians(90));
-            rowOneDone = new Pose(18.2, 54, Math.toRadians(90));
-            rowTwoStart = new Pose(-4, 24, Math.toRadians(90));
-            rowTwoDone = new Pose(-4, 54, Math.toRadians(90));
-            rowThreeStart = new Pose(-27, 24, Math.toRadians(90));
-            rowThreeDone = new Pose(-27, 54, Math.toRadians(90));
-            parkPose = new Pose(54, 24, Math.toRadians(-90));
+            launchPose = new Pose(56, 50, Math.toRadians(45));
+            rowOneStart = new Pose(15, 24, Math.toRadians(90));
+            rowOneDone = new Pose(15,58, Math.toRadians(90));
+            rowTwoStart = new Pose(-9.3, 24, Math.toRadians(90));
+            rowTwoDone = new Pose(-9.3, 58, Math.toRadians(90));
+            rowThreeStart = new Pose(-32.2, 24, Math.toRadians(90));
+            rowThreeDone = new Pose(-32.2 , 60.5, Math.toRadians(90));
+            parkPose = new Pose(54, 24, Math.toRadians(45));
         } else {
-
+            launchPose = new Pose(56, -50, Math.toRadians(-45));
             rowOneStart = new Pose(18.2, -24, Math.toRadians(-90));
-            rowOneDone = new Pose(18.2, -54, Math.toRadians(-90));
+            rowOneDone = new Pose(18.2, -58, Math.toRadians(-90));
             rowTwoStart = new Pose(-4, -24, Math.toRadians(-90));
-            rowTwoDone = new Pose(-4, -54, Math.toRadians(-90));
+            rowTwoDone = new Pose(-4, -58, Math.toRadians(-90));
             rowThreeStart = new Pose(-27, -24, Math.toRadians(-90));
-            rowThreeDone = new Pose(-27, -54, Math.toRadians(-90));
+            rowThreeDone = new Pose(-27, -58, Math.toRadians(-90));
             parkPose = new Pose(54, -24, Math.toRadians(90));
         }
 
+        toLaunch = follower.pathBuilder()
+                .addPath(new BezierLine(startPose, launchPose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), launchPose.getHeading())
+                .build();
+
         toRowOne = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, rowOneStart))
-                .setLinearHeadingInterpolation(startPose.getHeading(), rowOneStart.getHeading())
+                .addPath(new BezierLine(launchPose, rowOneStart))
+                .setLinearHeadingInterpolation(launchPose.getHeading(), rowOneStart.getHeading())
                 .build();
 
         pickupRowOne = follower.pathBuilder()
@@ -90,13 +99,13 @@ public class AtGoal {
                 .build();
 
         scoreRowOne = follower.pathBuilder()
-                .addPath(new BezierLine(rowOneDone, startPose))
-                .setLinearHeadingInterpolation(rowOneDone.getHeading(), startPose.getHeading())
+                .addPath(new BezierLine(rowOneDone, launchPose))
+                .setLinearHeadingInterpolation(rowOneDone.getHeading(), launchPose.getHeading())
                 .build();
 
         toRowTwo = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, rowTwoStart))
-                .setLinearHeadingInterpolation(startPose.getHeading(), rowTwoStart.getHeading())
+                .addPath(new BezierLine(launchPose, rowTwoStart))
+                .setLinearHeadingInterpolation(launchPose.getHeading(), rowTwoStart.getHeading())
                 .build();
 
         pickupRowTwo = follower.pathBuilder()
@@ -106,13 +115,13 @@ public class AtGoal {
                 .build();
 
         scoreRowTwo = follower.pathBuilder()
-                .addPath(new BezierCurve(rowTwoDone, rowOneStart, startPose))
-                .setLinearHeadingInterpolation(rowTwoDone.getHeading(), startPose.getHeading())
+                .addPath(new BezierCurve(rowTwoDone, rowOneStart, launchPose))
+                .setLinearHeadingInterpolation(rowTwoDone.getHeading(), launchPose.getHeading())
                 .build();
 
         toRowThree = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, rowThreeStart))
-                .setLinearHeadingInterpolation(startPose.getHeading(), rowThreeStart.getHeading())
+                .addPath(new BezierLine(launchPose, rowThreeStart))
+                .setLinearHeadingInterpolation(launchPose.getHeading(), rowThreeStart.getHeading())
                 .build();
 
         pickupRowThree = follower.pathBuilder()
@@ -121,41 +130,47 @@ public class AtGoal {
                 .build();
 
         scoreRowThree = follower.pathBuilder()
-                .addPath(new BezierLine(rowThreeDone, startPose))
-                .setLinearHeadingInterpolation(rowThreeDone.getHeading(), startPose.getHeading())
+                .addPath(new BezierCurve(rowThreeDone, rowTwoStart, launchPose))
+                .setLinearHeadingInterpolation(rowThreeDone.getHeading(), launchPose.getHeading())
                 .build();
 
         park = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, parkPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(), parkPose.getHeading())
+                .addPath(new BezierLine(launchPose, parkPose))
+                .setLinearHeadingInterpolation(launchPose.getHeading(), parkPose.getHeading())
                 .build();
     }
 
     public static void autonomousPathUpdate(Follower follower, int pathState) {
         switch (pathState) {
 
-            // preload
             case 00:
-                mywait(100);
-                Catapult.INSTANCE.load();
-                mywait(200);
-                Catapult.INSTANCE.launch();
-                mywait(100);
-                Intake.INSTANCE.intakein();
-                mywait(100);
-                Catapult.INSTANCE.load();
-                mywait(220);
-                Catapult.INSTANCE.launch();
-                mywait(500);
-                Catapult.INSTANCE.load();
-                mywait(200);
-                Catapult.INSTANCE.hold();
-                mywait(200);
-                Intake.INSTANCE.intakeoff();
-                if (rowCount > 0) {
-                    setPathState(10);
-                } else {
-                    setPathState(90);
+                follower.followPath(toLaunch);
+                setPathState(01);
+                break;
+            // preload
+            case 01:
+                if (!follower.isBusy()) {
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(200);
+                    Catapult.INSTANCE.launch();
+                    mywait(100);
+                    Intake.INSTANCE.intakein();
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(220);
+                    Catapult.INSTANCE.launch();
+                    mywait(500);
+                    Catapult.INSTANCE.load();
+                    mywait(200);
+                    Catapult.INSTANCE.hold();
+                    mywait(200);
+                    Intake.INSTANCE.intakeoff();
+                    if (rowCount > 0) {
+                        setPathState(10);
+                    } else {
+                        setPathState(90);
+                    }
                 }
                 break;
 
