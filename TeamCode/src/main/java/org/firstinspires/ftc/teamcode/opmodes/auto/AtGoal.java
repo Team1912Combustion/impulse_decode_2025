@@ -29,7 +29,6 @@ public class AtGoal {
     private static Timer pathTimer;
 
     private static Pose startPose = null;
-    private static Pose launchPose = null;
     // Path chains
     private static PathChain toRowOne;
     private static PathChain pickupRowOne;
@@ -41,6 +40,8 @@ public class AtGoal {
     private static PathChain pickupRowThree;
     private static PathChain scoreRowThree;
     private static PathChain park;
+
+    private static PathChain toLaunch;
 
     private static ElapsedTime waittimer = new ElapsedTime();
 
@@ -59,29 +60,37 @@ public class AtGoal {
         Pose rowThreeStart = null;
         Pose rowThreeDone = null;
         Pose parkPose = null;
+        Pose launchPose = null;
 
         // Poses
         if (I_AM_BLUE) {
-           rowOneStart = new Pose(14, -24, Math.toRadians(-90));
-           rowOneDone = new Pose(14, -54, Math.toRadians(-90));
-           rowTwoStart = new Pose(-11, -24, Math.toRadians(-90));
-           rowTwoDone = new Pose(-11, -54, Math.toRadians(-90));
-           rowThreeStart = new Pose(-33.5, -24, Math.toRadians(-90));
-           rowThreeDone = new Pose(-33.5, -54, Math.toRadians(-90));
-           parkPose = new Pose(56, -24, Math.toRadians(90));
+            launchPose = new Pose(56, 50, Math.toRadians(45));
+            rowOneStart = new Pose(15, 24, Math.toRadians(90));
+            rowOneDone = new Pose(15,58, Math.toRadians(90));
+            rowTwoStart = new Pose(-9.3, 24, Math.toRadians(90));
+            rowTwoDone = new Pose(-9.3, 58, Math.toRadians(90));
+            rowThreeStart = new Pose(-32.2, 24, Math.toRadians(90));
+            rowThreeDone = new Pose(-32.2 , 60.5, Math.toRadians(90));
+            parkPose = new Pose(54, 24, Math.toRadians(45));
         } else {
-            rowOneStart = new Pose(14, 24, Math.toRadians(90));
-            rowOneDone = new Pose(14, 54, Math.toRadians(90));
-            rowTwoStart = new Pose(-11, 24, Math.toRadians(90));
-            rowTwoDone = new Pose(-11, 54, Math.toRadians(90));
-            rowThreeStart = new Pose(-33.5, 24, Math.toRadians(90));
-            rowThreeDone = new Pose(-33.5, 54, Math.toRadians(90));
-            parkPose = new Pose(56, 24, Math.toRadians(-90));
+            launchPose = new Pose(56, -50, Math.toRadians(-45));
+            rowOneStart = new Pose(18.2, -24, Math.toRadians(-90));
+            rowOneDone = new Pose(18.2, -58, Math.toRadians(-90));
+            rowTwoStart = new Pose(-4, -24, Math.toRadians(-90));
+            rowTwoDone = new Pose(-4, -58, Math.toRadians(-90));
+            rowThreeStart = new Pose(-27, -24, Math.toRadians(-90));
+            rowThreeDone = new Pose(-27, -58, Math.toRadians(-90));
+            parkPose = new Pose(54, -24, Math.toRadians(90));
         }
 
+        toLaunch = follower.pathBuilder()
+                .addPath(new BezierLine(startPose, launchPose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), launchPose.getHeading())
+                .build();
+
         toRowOne = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, rowOneStart))
-                .setLinearHeadingInterpolation(startPose.getHeading(), rowOneStart.getHeading())
+                .addPath(new BezierLine(launchPose, rowOneStart))
+                .setLinearHeadingInterpolation(launchPose.getHeading(), rowOneStart.getHeading())
                 .build();
 
         pickupRowOne = follower.pathBuilder()
@@ -121,7 +130,7 @@ public class AtGoal {
                 .build();
 
         scoreRowThree = follower.pathBuilder()
-                .addPath(new BezierLine(rowThreeDone, launchPose))
+                .addPath(new BezierCurve(rowThreeDone, rowTwoStart, launchPose))
                 .setLinearHeadingInterpolation(rowThreeDone.getHeading(), launchPose.getHeading())
                 .build();
 
@@ -134,31 +143,34 @@ public class AtGoal {
     public static void autonomousPathUpdate(Follower follower, int pathState) {
         switch (pathState) {
 
-            // preload
             case 00:
-                if (rowCount == 1) {
-                    mywait(2500);
-                }
-                mywait(100);
-                Catapult.INSTANCE.load();
-                mywait(200);
-                Catapult.INSTANCE.launch();
-                mywait(100);
-                Intake.INSTANCE.intakein();
-                mywait(100);
-                Catapult.INSTANCE.load();
-                mywait(220);
-                Catapult.INSTANCE.launch();
-                mywait(500);
-                Catapult.INSTANCE.load();
-                mywait(200);
-                Catapult.INSTANCE.hold();
-                mywait(200);
-                Intake.INSTANCE.intakeoff();
-                if (rowCount > 0) {
-                    setPathState(10);
-                } else {
-                    setPathState(90);
+                follower.followPath(toLaunch);
+                setPathState(01);
+                break;
+            // preload
+            case 01:
+                if (!follower.isBusy()) {
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(200);
+                    Catapult.INSTANCE.launch();
+                    mywait(100);
+                    Intake.INSTANCE.intakein();
+                    mywait(100);
+                    Catapult.INSTANCE.load();
+                    mywait(220);
+                    Catapult.INSTANCE.launch();
+                    mywait(500);
+                    Catapult.INSTANCE.load();
+                    mywait(200);
+                    Catapult.INSTANCE.hold();
+                    mywait(200);
+                    Intake.INSTANCE.intakeoff();
+                    if (rowCount > 0) {
+                        setPathState(10);
+                    } else {
+                        setPathState(90);
+                    }
                 }
                 break;
 
@@ -349,11 +361,9 @@ public class AtGoal {
         telemetry.addData(">", "hardware init complete.");
         follower = Constants.createFollower(hardwareMap);
         if (I_AM_BLUE) {
-            startPose = new Pose(56, -56, Math.toRadians(-45));
-            launchPose = new Pose(56, -54, Math.toRadians(-45));
-        } else {
             startPose = new Pose(56, 56, Math.toRadians(45));
-            launchPose = new Pose(56, 54, Math.toRadians(45));
+        } else {
+            startPose = new Pose(56, -56, Math.toRadians(-45));
         }
         buildPaths(I_AM_BLUE);
         follower.setStartingPose(startPose);
