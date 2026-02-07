@@ -29,6 +29,7 @@ public class AtGoal {
     private static Timer pathTimer;
 
     private static Pose startPose = null;
+    private static Pose launchPose = null;
     // Path chains
     private static PathChain toRowOne;
     private static PathChain pickupRowOne;
@@ -89,13 +90,13 @@ public class AtGoal {
                 .build();
 
         scoreRowOne = follower.pathBuilder()
-                .addPath(new BezierLine(rowOneDone, startPose))
-                .setLinearHeadingInterpolation(rowOneDone.getHeading(), startPose.getHeading())
+                .addPath(new BezierLine(rowOneDone, launchPose))
+                .setLinearHeadingInterpolation(rowOneDone.getHeading(), launchPose.getHeading())
                 .build();
 
         toRowTwo = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, rowTwoStart))
-                .setLinearHeadingInterpolation(startPose.getHeading(), rowTwoStart.getHeading())
+                .addPath(new BezierLine(launchPose, rowTwoStart))
+                .setLinearHeadingInterpolation(launchPose.getHeading(), rowTwoStart.getHeading())
                 .build();
 
         pickupRowTwo = follower.pathBuilder()
@@ -105,13 +106,13 @@ public class AtGoal {
                 .build();
 
         scoreRowTwo = follower.pathBuilder()
-                .addPath(new BezierCurve(rowTwoDone, rowOneStart, startPose))
-                .setLinearHeadingInterpolation(rowTwoDone.getHeading(), startPose.getHeading())
+                .addPath(new BezierCurve(rowTwoDone, rowOneStart, launchPose))
+                .setLinearHeadingInterpolation(rowTwoDone.getHeading(), launchPose.getHeading())
                 .build();
 
         toRowThree = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, rowThreeStart))
-                .setLinearHeadingInterpolation(startPose.getHeading(), rowThreeStart.getHeading())
+                .addPath(new BezierLine(launchPose, rowThreeStart))
+                .setLinearHeadingInterpolation(launchPose.getHeading(), rowThreeStart.getHeading())
                 .build();
 
         pickupRowThree = follower.pathBuilder()
@@ -120,13 +121,13 @@ public class AtGoal {
                 .build();
 
         scoreRowThree = follower.pathBuilder()
-                .addPath(new BezierLine(rowThreeDone, startPose))
-                .setLinearHeadingInterpolation(rowThreeDone.getHeading(), startPose.getHeading())
+                .addPath(new BezierLine(rowThreeDone, launchPose))
+                .setLinearHeadingInterpolation(rowThreeDone.getHeading(), launchPose.getHeading())
                 .build();
 
         park = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, parkPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(), parkPose.getHeading())
+                .addPath(new BezierLine(launchPose, parkPose))
+                .setLinearHeadingInterpolation(launchPose.getHeading(), parkPose.getHeading())
                 .build();
     }
 
@@ -135,6 +136,9 @@ public class AtGoal {
 
             // preload
             case 00:
+                if (rowCount == 1) {
+                    mywait(2500);
+                }
                 mywait(100);
                 Catapult.INSTANCE.load();
                 mywait(200);
@@ -346,8 +350,10 @@ public class AtGoal {
         follower = Constants.createFollower(hardwareMap);
         if (I_AM_BLUE) {
             startPose = new Pose(56, -56, Math.toRadians(-45));
+            launchPose = new Pose(56, -54, Math.toRadians(-45));
         } else {
             startPose = new Pose(56, 56, Math.toRadians(45));
+            launchPose = new Pose(56, 54, Math.toRadians(45));
         }
         buildPaths(I_AM_BLUE);
         follower.setStartingPose(startPose);
