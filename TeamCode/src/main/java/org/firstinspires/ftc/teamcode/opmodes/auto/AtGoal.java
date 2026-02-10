@@ -64,22 +64,22 @@ public class AtGoal {
 
         // Poses
         if (I_AM_BLUE) {
-            launchPose = new Pose(56, 50, Math.toRadians(45));
-            rowOneStart = new Pose(15, 24, Math.toRadians(90));
-            rowOneDone = new Pose(15,58, Math.toRadians(90));
-            rowTwoStart = new Pose(-9.3, 24, Math.toRadians(90));
-            rowTwoDone = new Pose(-9.3, 58, Math.toRadians(90));
-            rowThreeStart = new Pose(-32.2, 24, Math.toRadians(90));
-            rowThreeDone = new Pose(-32.2 , 60.5, Math.toRadians(90));
+            launchPose = new Pose(55, 50, Math.toRadians(45));
+            rowOneStart = new Pose(14.5, 24, Math.toRadians(90));
+            rowOneDone = new Pose(14.5,58, Math.toRadians(90));
+            rowTwoStart = new Pose(-10.3, 24, Math.toRadians(90));
+            rowTwoDone = new Pose(-10.3, 58, Math.toRadians(90));
+            rowThreeStart = new Pose(-33.2, 24, Math.toRadians(90));
+            rowThreeDone = new Pose(-33.2 , 60.5, Math.toRadians(90));
             parkPose = new Pose(54, 24, Math.toRadians(45));
         } else {
             launchPose = new Pose(56, -50, Math.toRadians(-45));
-            rowOneStart = new Pose(18.2, -24, Math.toRadians(-90));
-            rowOneDone = new Pose(18.2, -58, Math.toRadians(-90));
-            rowTwoStart = new Pose(-4, -24, Math.toRadians(-90));
-            rowTwoDone = new Pose(-4, -58, Math.toRadians(-90));
-            rowThreeStart = new Pose(-27, -24, Math.toRadians(-90));
-            rowThreeDone = new Pose(-27, -58, Math.toRadians(-90));
+            rowOneStart = new Pose(17.2, -24, Math.toRadians(-90));
+            rowOneDone = new Pose(17.2, -58, Math.toRadians(-90));
+            rowTwoStart = new Pose(-5, -24, Math.toRadians(-90));
+            rowTwoDone = new Pose(-5, -58, Math.toRadians(-90));
+            rowThreeStart = new Pose(-28, -24, Math.toRadians(-90));
+            rowThreeDone = new Pose(-28, -58, Math.toRadians(-90));
             parkPose = new Pose(54, -24, Math.toRadians(90));
         }
 
@@ -143,12 +143,15 @@ public class AtGoal {
     public static void autonomousPathUpdate(Follower follower, int pathState) {
         switch (pathState) {
 
-            case 00:
+            case 0:
                 follower.followPath(toLaunch);
-                setPathState(01);
+                if (rowCount == 1) {
+                    mywait(2500);
+                }
+                setPathState(1);
                 break;
             // preload
-            case 01:
+            case 1:
                 if (!follower.isBusy()) {
                     mywait(100);
                     Catapult.INSTANCE.load();
