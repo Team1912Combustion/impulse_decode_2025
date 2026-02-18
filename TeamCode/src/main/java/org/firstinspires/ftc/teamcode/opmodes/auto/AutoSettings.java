@@ -19,6 +19,8 @@ public class AutoSettings {
     public boolean I_AM_BLUE = false;
     public boolean SHOOT_LAST = false;
     public boolean AT_GOAL = true;
+
+    public boolean HIT_GATE = true;
     /*
     public boolean GO_PIXEL = true;
     public boolean GO_BACKDROP = true;
@@ -33,6 +35,8 @@ public class AutoSettings {
     public boolean shootLast() { return SHOOT_LAST; }
     public boolean iAmBlue() { return I_AM_BLUE; }
     public boolean atGoal() { return AT_GOAL; }
+
+    public boolean hitGate() {return HIT_GATE    ; }
     /*
     public boolean goBackDrop() { return GO_BACKDROP; }
     public boolean goPark() { return GO_PARK; }
@@ -47,6 +51,7 @@ public class AutoSettings {
         myAutoConfig.SHOOT_LAST = SHOOT_LAST;
         myAutoConfig.AT_GOAL = AT_GOAL;
         myAutoConfig.ROW_COUNT = ROW_COUNT;
+        myAutoConfig.HIT_GATE = HIT_GATE;
         /*
         myAutoConfig.GO_BACKDROP = GO_BACKDROP;
         myAutoConfig.GO_PARK = GO_PARK;
@@ -62,6 +67,7 @@ public class AutoSettings {
         AT_GOAL       = myAutoConfig.AT_GOAL;
         SHOOT_LAST    = myAutoConfig.SHOOT_LAST;
         ROW_COUNT     = myAutoConfig.ROW_COUNT;
+        HIT_GATE      = myAutoConfig.HIT_GATE;
         /*
         GO_BACKDROP   = myAutoConfig.GO_BACKDROP;
         GO_PARK       = myAutoConfig.GO_PARK;
@@ -76,6 +82,7 @@ public class AutoSettings {
         myAutoConfig.SHOOT_LAST    = tmpAutoConfig.SHOOT_LAST;
         myAutoConfig.AT_GOAL       = tmpAutoConfig.AT_GOAL;
         myAutoConfig.ROW_COUNT     = tmpAutoConfig.ROW_COUNT;
+        myAutoConfig.HIT_GATE       = tmpAutoConfig.HIT_GATE;
         /*
         myAutoConfig.GO_BACKDROP   = tmpAutoConfig.GO_BACKDROP;
         myAutoConfig.GO_PARK       = tmpAutoConfig.GO_PARK;
@@ -108,6 +115,8 @@ class AutoConfig implements Cloneable
     public boolean SHOOT_LAST = false;
     public boolean AT_GOAL = true;
     public int ROW_COUNT = 1;
+
+    public boolean HIT_GATE = false;
     /*
     public boolean GO_BACKDROP = true;
     public boolean GO_PARK = true;

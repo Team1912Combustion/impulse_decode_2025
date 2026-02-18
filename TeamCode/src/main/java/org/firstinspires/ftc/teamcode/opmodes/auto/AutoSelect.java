@@ -1,7 +1,7 @@
 
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import   com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -65,11 +65,14 @@ public class AutoSelect extends LinearOpMode
             if (g1dprPressed) {
                 AutoSettings.INSTANCE.ROW_COUNT = (AutoSettings.INSTANCE.ROW_COUNT + 1) % 4;
             }
+            if (g1dpdPressed) { AutoSettings.INSTANCE.HIT_GATE = !AutoSettings.INSTANCE.HIT_GATE; }
+
             // if (g1dplPressed) { incTurnPos(); }
 
             String myAlliance   = AutoSettings.INSTANCE.iAmBlue() ? "Blue" : "Red";
             String myPosition   = AutoSettings.INSTANCE.atGoal() ? "AtGoal" : "AtWall";
             int myRowCount   = AutoSettings.INSTANCE.rowCount();
+            String hitGate = AutoSettings.INSTANCE.hitGate() ? "gate" : "nogate";
 
             if (booleanIncrementer != 0) {
                 AutoSettings.INSTANCE.saveAutoConfig();
@@ -84,8 +87,10 @@ public class AutoSelect extends LinearOpMode
             telemetry.addData("Alliance Color (Dpad Up): ", myAlliance);
             telemetry.addData("Start Position (Dpad Left): ", myPosition);
             telemetry.addData("Rows to intake (Dpad Right): ", myRowCount);
+            telemetry.addData("Hit Gate or Not (Dpad Down): ", hitGate);
             telemetry.addData("Obelisk Tag ID: ", Vision.INSTANCE.getObeliskTag());
             telemetry.addLine(" ");
+
 
             telemetry.addData(">", "Touch Play to start OpMode");
             telemetry.update();
@@ -98,7 +103,8 @@ public class AutoSelect extends LinearOpMode
         if (AutoSettings.INSTANCE.atGoal()) {
             AtGoal.init(hardwareMap, telemetry,
                     AutoSettings.INSTANCE.I_AM_BLUE,
-                    AutoSettings.INSTANCE.ROW_COUNT);
+                    AutoSettings.INSTANCE.ROW_COUNT,
+                    AutoSettings.INSTANCE.HIT_GATE);
             AtGoal.run();
         } else {
             AtWall.init(hardwareMap, telemetry,

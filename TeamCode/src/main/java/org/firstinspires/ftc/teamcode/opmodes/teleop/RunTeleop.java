@@ -135,6 +135,7 @@ public class RunTeleop extends OpMode {
         double turn = -1. * squareInput(gamepad1.right_stick_x);
         Drive.INSTANCE.moveRobot(drive, strafe, turn);
 
+
         telemetry.addData("Drive: ","powers: %5.2f / %5.2f / %5.2f",drive,strafe,turn);
         telemetry.update();
     }

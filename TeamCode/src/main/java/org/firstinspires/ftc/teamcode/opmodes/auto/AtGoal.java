@@ -40,6 +40,7 @@ public class AtGoal {
     private static PathChain pickupRowThree;
     private static PathChain scoreRowThree;
     private static PathChain park;
+    private static PathChain knockGate;
 
     private static PathChain toLaunch;
 
@@ -50,11 +51,16 @@ public class AtGoal {
 
     private static int rowCount = 0;
 
+    private static boolean hitGate = true;
+
     public static void buildPaths(boolean I_AM_BLUE) {
 
         // Poses
+
         Pose rowOneStart = null;
         Pose rowOneDone = null;
+        Pose toGate = null;
+        Pose hitGate = null;
         Pose rowTwoStart = null;
         Pose rowTwoDone = null;
         Pose rowThreeStart = null;
@@ -62,25 +68,35 @@ public class AtGoal {
         Pose parkPose = null;
         Pose launchPose = null;
 
+
         // Poses
+
         if (I_AM_BLUE) {
             launchPose = new Pose(56, 50, Math.toRadians(45));
             rowOneStart = new Pose(15, 24, Math.toRadians(90));
+            toGate = new Pose(4.5, 48,Math.toRadians(0));
+            hitGate = new Pose(4.5, 62,Math.toRadians(0));
             rowOneDone = new Pose(15,58, Math.toRadians(90));
             rowTwoStart = new Pose(-9.3, 24, Math.toRadians(90));
             rowTwoDone = new Pose(-9.3, 58, Math.toRadians(90));
             rowThreeStart = new Pose(-32.2, 24, Math.toRadians(90));
             rowThreeDone = new Pose(-32.2 , 60.5, Math.toRadians(90));
+            //rowFourStart = new Pose(-56, 72,Math.toRadians(135));
+           // rowFourDone = new Pose(-70, 72,Math.toRadians(135));
             parkPose = new Pose(54, 24, Math.toRadians(45));
         } else {
             launchPose = new Pose(56, -50, Math.toRadians(-45));
             rowOneStart = new Pose(18.2, -24, Math.toRadians(-90));
+            toGate = new Pose(4.5, -48,Math.toRadians(0));
+            hitGate = new Pose(4.5 -62,Math.toRadians(0));
             rowOneDone = new Pose(18.2, -58, Math.toRadians(-90));
             rowTwoStart = new Pose(-4, -24, Math.toRadians(-90));
             rowTwoDone = new Pose(-4, -58, Math.toRadians(-90));
             rowThreeStart = new Pose(-27, -24, Math.toRadians(-90));
             rowThreeDone = new Pose(-27, -58, Math.toRadians(-90));
-            parkPose = new Pose(54, -24, Math.toRadians(90));
+            //rowFourStart = new Pose(-56, -72.,Math.toRadians(-135));
+            //rowFourDone = new Pose(-70, -72,Math.toRadians(-135));
+            parkPose = new Pose(54, -24, Math.toRadians(-90));
         }
 
         toLaunch = follower.pathBuilder()
@@ -98,10 +114,17 @@ public class AtGoal {
                 .setLinearHeadingInterpolation(rowOneStart.getHeading(), rowOneDone.getHeading())
                 .build();
 
+        knockGate = follower.pathBuilder()
+                .addPath(new BezierLine(rowOneDone, toGate))
+                .addPath(new BezierLine(toGate, hitGate))
+                .setLinearHeadingInterpolation(rowOneDone.getHeading(), hitGate.getHeading(), 0.3)
+                .build();
+
         scoreRowOne = follower.pathBuilder()
                 .addPath(new BezierLine(rowOneDone, launchPose))
                 .setLinearHeadingInterpolation(rowOneDone.getHeading(), launchPose.getHeading())
                 .build();
+
 
         toRowTwo = follower.pathBuilder()
                 .addPath(new BezierLine(launchPose, rowTwoStart))
@@ -138,22 +161,40 @@ public class AtGoal {
                 .addPath(new BezierLine(launchPose, parkPose))
                 .setLinearHeadingInterpolation(launchPose.getHeading(), parkPose.getHeading())
                 .build();
+/*
+        toRowFour = follower.pathBuilder()
+                .addPath(new BezierCurve(launchPose, rowThreeStart, rowFourStart))
+                .setLinearHeadingInterpolation(launchPose.getHeading(), rowFourStart.getHeading())
+                .build();
+
+        pickupRowFour = follower.pathBuilder()
+                .addPath(new BezierLine(rowFourStart, rowFourDone))
+                .setLinearHeadingInterpolation(rowFourStart.getHeading(), rowFourDone.getHeading())
+                .build();
+
+        scoreRowFour = follower.pathBuilder()
+                .addPath(new BezierCurve(rowFourDone, rowThreeStart,launchPose))
+                .setLinearHeadingInterpolation(rowFourDone.getHeading(), launchPose.getHeading())
+                .build();
+*/
     }
 
     public static void autonomousPathUpdate(Follower follower, int pathState) {
         switch (pathState) {
 
-            case 00:
+            case 0:
                 follower.followPath(toLaunch);
-                setPathState(01);
+                setPathState(1);
                 break;
+
             // preload
-            case 01:
+            case 1:
                 if (!follower.isBusy()) {
                     mywait(100);
                     Catapult.INSTANCE.load();
                     mywait(200);
                     Catapult.INSTANCE.launch();
+                    /*
                     mywait(100);
                     Intake.INSTANCE.intakein();
                     mywait(100);
@@ -166,6 +207,8 @@ public class AtGoal {
                     Catapult.INSTANCE.hold();
                     mywait(200);
                     Intake.INSTANCE.intakeoff();
+                    */
+
                     if (rowCount > 0) {
                         setPathState(10);
                     } else {
@@ -174,37 +217,49 @@ public class AtGoal {
                 }
                 break;
 
+            case 2:
+                follower.followPath(toRowOne);
+                setPathState(10);
+                break;
+
+
             // row 1
             case 10:
                 follower.followPath(toRowOne);
-                setPathState(11);
+                setPathState(12);
                 break;
-            case 11:
+            case 12:
                 if (!follower.isBusy()) {
                     // turn on intake before driving;
                     Intake.INSTANCE.intakein();
-                    setPathState(12);
+                    setPathState(13);
                 }
-                break;
-            case 12:
-                follower.followPath(pickupRowOne);
-                setPathState(13);
                 break;
             case 13:
-                if (!follower.isBusy()) {
-                    // turn off intake before driving;
-                    Intake.INSTANCE.intakeoff();
-                    setPathState(14);
-                }
+                follower.followPath(pickupRowOne);
+                setPathState(14);
                 break;
             case 14:
                 if (!follower.isBusy()) {
-                    // turn on intake before driving;
-                    follower.followPath(scoreRowOne);
+                    // turn off intake before driving;
+                    Intake.INSTANCE.intakeoff();
                     setPathState(15);
                 }
-                break;
             case 15:
+                if (!follower.isBusy()) {
+                    follower.followPath(knockGate);
+                    setPathState(16);
+                }
+
+                break;
+            case 16:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    follower.followPath(scoreRowOne);
+                    setPathState(17);
+                }
+                break;
+            case 17:
                 if (!follower.isBusy()) {
                     mywait(100);
                     Catapult.INSTANCE.load();
@@ -221,6 +276,7 @@ public class AtGoal {
                     }
                 }
                 break;
+
 
             // row 2
             case 20:
@@ -270,6 +326,7 @@ public class AtGoal {
                 }
                 break;
 
+
             // row 3
             case 30:
                 follower.followPath(toRowThree);
@@ -279,21 +336,28 @@ public class AtGoal {
                 if (!follower.isBusy()) {
                     // turn on intake before driving;
                     Intake.INSTANCE.intakein();
-                    mywait(100);
-                    follower.followPath(pickupRowThree);
                     setPathState(32);
                 }
                 break;
             case 32:
-                if (!follower.isBusy()) {
-                    // turn on intake before driving;
-                    Intake.INSTANCE.intakein();
-                    mywait(100);
-                    follower.followPath(scoreRowThree);
-                    setPathState(33);
-                }
+                follower.followPath(pickupRowThree);
+                setPathState(33);
                 break;
             case 33:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    Intake.INSTANCE.intakeoff();
+                    setPathState(34);
+                }
+                break;
+            case 34:
+                if (!follower.isBusy()) {
+                    // turn on intake before driving;
+                    follower.followPath(scoreRowThree);
+                    setPathState(35);
+                }
+                break;
+            case 35:
                 if (!follower.isBusy()) {
                     mywait(100);
                     Catapult.INSTANCE.load();
@@ -314,6 +378,7 @@ public class AtGoal {
                 follower.followPath(park);
                 setPathState(91);
                 break;
+
             case 91:
                 if (!follower.isBusy()) {
                     setPathState(99);
@@ -323,6 +388,7 @@ public class AtGoal {
             default:
                Catapult.INSTANCE.hold();
                Intake.INSTANCE.intakeoff();
+               follower.pausePathFollowing();
                Drive.INSTANCE.stop();
 
             /* You could check for
@@ -345,12 +411,15 @@ public class AtGoal {
 
     public static void init(HardwareMap hardwareMap, Telemetry m_telemetry,
                             boolean I_AM_BLUE,
-                            int m_rowCount) {
+                            int m_rowCount,
+                            boolean m_HIT_GATE) {
         telemetry = m_telemetry;
         rowCount = m_rowCount;
+        hitGate = m_HIT_GATE;
         waittimer.reset();
         pathTimer = new Timer();
         pathTimer.resetTimer();
+
 
         Drive.INSTANCE.init(hardwareMap);
         Catapult.INSTANCE.init(hardwareMap);
