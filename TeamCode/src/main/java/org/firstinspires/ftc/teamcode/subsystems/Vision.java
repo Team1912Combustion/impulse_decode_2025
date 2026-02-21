@@ -31,8 +31,8 @@ public class Vision {
     private int RED_TAG_ID =  24;
 
     public static class TargetPose {
-        AprilTagPoseFtc pose;
-        int id;
+        public AprilTagPoseFtc pose;
+        public int id;
     }
 
     public TargetPose targetPose;
