@@ -13,7 +13,7 @@ public class Lift {
     private static final String motor_name = "lift";
 
     private static final int STOW_POSITION = 0;
-    private static final int TIP_POSITION = 4800;
+    private static final int TIP_POSITION = 1550;
     private static final double POWER_TO_STOW = -1.;
     private static final double POWER_TO_TIP = +1.;
 
