@@ -28,6 +28,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.utils.Pose2d;
+import com.pedropathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.utils.Rotation2d;
 
 public class PinPoint {
@@ -65,6 +66,14 @@ public class PinPoint {
                 AngleUnit.DEGREES, pose.getHeading(AngleUnit.DEGREES)));
     }
 
+    public Pose getPose() {
+        pinpoint.update();
+        Pose2D newpose = pinpoint.getPosition();
+        return new Pose(newpose.getX(DistanceUnit.INCH),
+                newpose.getY(DistanceUnit.INCH),
+                newpose.getHeading(AngleUnit.RADIANS));
+    }
+
     public Pose2d getPose2d() {
         pinpoint.update();
         Pose2D newpose = pinpoint.getPosition();
@@ -78,6 +87,7 @@ public class PinPoint {
         return pinpoint.getPosition();
     }
 
+    /*
     public double[] getPose() {
         double[] pose = {0.,0.,0.};
         pinpoint.update();
@@ -87,6 +97,7 @@ public class PinPoint {
         pose[2] = pose2D.getHeading(AngleUnit.DEGREES);
         return pose;
     }
+    */
 
     public void configurePinpoint(){
        /*
