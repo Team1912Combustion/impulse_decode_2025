@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 
 @TeleOp(name = "TestCatapult")
+@Disabled
 public class TestCatapult extends OpMode {
 
     @Override
