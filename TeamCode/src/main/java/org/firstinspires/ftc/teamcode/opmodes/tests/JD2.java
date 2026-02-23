@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,13 +13,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.PinPoint;
 
 @TeleOp(name = "JD2")
+@Disabled
 public class JD2 extends OpMode {
     private static Follower follower;
-    private static PathChain toScore;
+    private static PathChain toLaunch;
     Pose launchPose = null;
-
-    ElapsedTime squaretimer = new ElapsedTime();
-    boolean squareup = false;
+    ElapsedTime autoTimer = new ElapsedTime();
+    boolean runAuto = false;
     double STICK_MIN = 0.05;
 
     @Override
@@ -63,22 +64,22 @@ public class JD2 extends OpMode {
         boolean rbp = gamepad1.rightBumperWasPressed();
         boolean rbr = gamepad1.rightBumperWasReleased();
         if (rbp) {
-            squareup = true;
+            runAuto = true;
             //follower.setStartingPose(currentPose);
             follower.setPose(currentPose);
-            toScore = follower.pathBuilder()
+            toLaunch = follower.pathBuilder()
                     .addPath(new BezierLine(currentPose, launchPose))
                     .setLinearHeadingInterpolation(currentPose.getHeading(), launchPose.getHeading(), 0.2)
                     .build();
-            follower.followPath(toScore);
-            squaretimer.reset();
+            follower.followPath(toLaunch);
+            autoTimer.reset();
         }
         if (rbr) {
             follower.startTeleopDrive();
-            squareup = false;
+            runAuto = false;
         }
 
-        if (squareup) {
+        if (runAuto) {
             telemetry.addLine(String.format("run   Pose %6.1f %6.1f %6.1f", currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
             telemetry.addLine(String.format("run Target %6.1f %6.1f %6.1f", launchPose.getX(), launchPose.getY(), launchPose.getHeading()));
         } else {
@@ -95,6 +96,7 @@ public class JD2 extends OpMode {
                 launchPose = PinPoint.INSTANCE.getPose();
             }
         }
+
         telemetry.addData("Gamepad 1 Right Bumper Pressed", rbp);
         telemetry.addData("Gamepad 1 Right Bumper Released", rbr);
         telemetry.addData("Gamepad 1 Right Bumper Status", gamepad1.right_bumper);

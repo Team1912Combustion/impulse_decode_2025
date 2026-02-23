@@ -1,26 +1,35 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.ActiveOpMode;
+import org.firstinspires.ftc.teamcode.opmodes.auto.AutoSettings;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Catapult;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.subsystems.PinPoint;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
-import org.firstinspires.ftc.teamcode.opmodes.auto.AutoSettings;
 
 @TeleOp(name = "Teleop")
-public class RunTeleop extends OpMode {
+public class Teleop extends OpMode {
 
     final private ElapsedTime teleopTimer = new ElapsedTime();
     final private ElapsedTime blinkTimer = new ElapsedTime();
     boolean endGameWarning = false;
-    boolean lift_press = false;
+
+    private static Follower follower;
+    private static PathChain toLaunch;
+
+    Pose launchPose = null;
+    ElapsedTime autoTimer = new ElapsedTime();
+    boolean runAuto = false;
 
     @Override
     public void init() {
@@ -34,7 +43,9 @@ public class RunTeleop extends OpMode {
         Lift.INSTANCE.init(hardwareMap);
         Intake.INSTANCE.init(hardwareMap);
         PinPoint.INSTANCE.init(hardwareMap);
-        Odometry.INSTANCE.teleinit();
+        follower = Constants.createFollower(hardwareMap);
+        launchPose = PinPoint.INSTANCE.getPose();
+
         telemetry.addData(">", "Initialization complete.");
         telemetry.update();
     }
@@ -53,6 +64,7 @@ public class RunTeleop extends OpMode {
     public void start() {
         teleopTimer.reset();
         endGameWarning = false;
+        follower.startTeleopDrive();
     }
 
     /*
@@ -60,6 +72,11 @@ public class RunTeleop extends OpMode {
      */
     @Override
     public void loop() {
+
+        follower.update();
+        Pose currentPose = PinPoint.INSTANCE.getPose();
+        telemetry.addLine(String.format("pose   %6.1f %6.1f %6.1f", currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
+        telemetry.addLine(String.format("target %6.1f %6.1f %6.1f", launchPose.getX(), launchPose.getY(), launchPose.getHeading()));
 
         if (teleopTimer.seconds() >= 80. & teleopTimer.seconds() <= 90.) {
             if (! endGameWarning) {
@@ -71,28 +88,50 @@ public class RunTeleop extends OpMode {
             }
         }
 
-       // boolean intakeInButton = gamepad1.left_trigger > 0.2;
-        //boolean intakeOutButton = gamepad1.left_bumper;
+        // DRIVE
+        boolean rbp = gamepad1.rightBumperWasPressed();
+        boolean rbr = gamepad1.rightBumperWasReleased();
+        if (rbp) {
+            runAuto = true;
+            follower.setPose(currentPose);
+            toLaunch = follower.pathBuilder()
+                    .addPath(new BezierLine(currentPose, launchPose))
+                    .setLinearHeadingInterpolation(currentPose.getHeading(), launchPose.getHeading(), 0.2)
+                    .build();
+            follower.followPath(toLaunch);
+            autoTimer.reset();
+        }
+        if (rbr) {
+            follower.startTeleopDrive();
+            runAuto = false;
+        }
+        if (runAuto) {
+            telemetry.addLine(String.format("...auto pose   %6.1f %6.1f %6.1f", currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
+            telemetry.addLine(String.format("...auto target %6.1f %6.1f %6.1f", launchPose.getX(), launchPose.getY(), launchPose.getHeading()));
+        } else {
+            telemetry.addLine(String.format("...teleOp mode"));
+            double drive = -1. * squareInput(gamepad1.left_stick_y);
+            double strafe = -1. * squareInput(gamepad1.left_stick_x);
+            double turn = -1. * squareInput(gamepad1.right_stick_x);
+            follower.setTeleOpDrive(drive, strafe, turn, true);
+            // follower.setTeleOpDrive(
+            //         -gamepad1.left_stick_y,
+            //         -gamepad1.left_stick_x,
+            //         -gamepad1.right_stick_x,
+            //         true // Robot Centric
+            // );
+            if (gamepad1.left_bumper) {
+                launchPose = PinPoint.INSTANCE.getPose();
+            }
+        }
+
+        // INTAKE
         boolean intakeInButton = gamepad1.a;
         boolean intakeOutButton = gamepad1.b;
         if (intakeOutButton && intakeInButton) {
             intakeInButton = false;
             intakeOutButton = false;
         }
-
-        boolean liftOutButton = gamepad2.dpad_down;
-        boolean liftUpButton = gamepad2.dpad_up;
-        if (liftOutButton && liftUpButton) {
-            liftOutButton = false;
-        }
-
-        boolean catapultLaunchButton = gamepad2.right_trigger > 0.2;
-        boolean catapultLoadButton = gamepad2.right_bumper;
-        if (catapultLaunchButton && catapultLoadButton) {
-            catapultLaunchButton = false;
-        }
-
-        // INTAKE CODE
         if (intakeInButton) {
             Intake.INSTANCE.intakein();
             telemetry.addLine("Intake: In");
@@ -104,6 +143,12 @@ public class RunTeleop extends OpMode {
             telemetry.addLine("Intake: Off");
         }
 
+        // CATAPULT
+        boolean catapultLaunchButton = gamepad2.right_trigger > 0.2;
+        boolean catapultLoadButton = gamepad2.right_bumper;
+        if (catapultLaunchButton && catapultLoadButton) {
+            catapultLaunchButton = false;
+        }
         if (catapultLaunchButton) {
             Catapult.INSTANCE.launch();
             telemetry.addLine("Catapult: Launch");
@@ -117,7 +162,12 @@ public class RunTeleop extends OpMode {
         telemetry.addData("Catapult: position:",Catapult.INSTANCE.getLeftPosition());
         telemetry.addData("Catapult: position:",Catapult.INSTANCE.getRightPosition());
 
-        // LIFT CODE
+        // LIFT
+        boolean liftOutButton = gamepad2.dpad_down;
+        boolean liftUpButton = gamepad2.dpad_up;
+        if (liftOutButton && liftUpButton) {
+            liftOutButton = false;
+        }
         if (liftOutButton) {
             Lift.INSTANCE.tip();
             telemetry.addLine("Lift: Tip");
@@ -130,13 +180,11 @@ public class RunTeleop extends OpMode {
         }
         telemetry.addData("Lift: position:",Lift.INSTANCE.getPosition());
 
-        double drive = -1. * squareInput(gamepad1.left_stick_y);
-        double strafe = -1. * squareInput(gamepad1.left_stick_x);
-        double turn = -1. * squareInput(gamepad1.right_stick_x);
-        Drive.INSTANCE.moveRobot(drive, strafe, turn);
-
-
-        telemetry.addData("Drive: ","powers: %5.2f / %5.2f / %5.2f",drive,strafe,turn);
+        //double drive = -1. * squareInput(gamepad1.left_stick_y);
+        //double strafe = -1. * squareInput(gamepad1.left_stick_x);
+        //double turn = -1. * squareInput(gamepad1.right_stick_x);
+        //Drive.INSTANCE.moveRobot(drive, strafe, turn);
+        // telemetry.addData("Drive: ","powers: %5.2f / %5.2f / %5.2f",drive,strafe,turn);
         telemetry.update();
     }
 

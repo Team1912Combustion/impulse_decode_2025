@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 import java.util.ArrayList;
 
-@Autonomous(name="AutoSelect", preselectTeleOp = "runTeleop")
+@Autonomous(name="AutoSelect", preselectTeleOp = "Teleop")
 public class AutoSelect extends LinearOpMode
 {
 
