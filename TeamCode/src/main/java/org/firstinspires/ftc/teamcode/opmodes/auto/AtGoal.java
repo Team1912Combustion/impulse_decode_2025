@@ -76,15 +76,15 @@ public class AtGoal {
         // Poses
 
         if (I_AM_BLUE) {
-            launchPose = new Pose(56, 50, Math.toRadians(45));
-            rowOneStart = new Pose(15, 24, Math.toRadians(90));
-            toGate = new Pose(9, 48,Math.toRadians(0));
-            hitGate = new Pose(9, 57.5,Math.toRadians(0));
-            rowOneDone = new Pose(15,58, Math.toRadians(90));
+            launchPose = new Pose(55.4, 50.7, Math.toRadians(45));
+            rowOneStart = new Pose(13.5, 24, Math.toRadians(90));
+            toGate = new Pose(13.8, 48,Math.toRadians(0));
+            hitGate = new Pose(13.8, 62.3,Math.toRadians(0));
+            rowOneDone = new Pose(13.5,55, Math.toRadians(90));
             rowTwoStart = new Pose(-9.3, 24, Math.toRadians(90));
             rowTwoDone = new Pose(-9.3, 58, Math.toRadians(90));
-            rowThreeStart = new Pose(-32.2, 24, Math.toRadians(90));
-            rowThreeDone = new Pose(-32.2 , 60.5, Math.toRadians(90));
+            rowThreeStart = new Pose(-32.7, 24, Math.toRadians(90));
+            rowThreeDone = new Pose(-32.7 , 60.5, Math.toRadians(90));
             //rowFourStart = new Pose(-56, 72,Math.toRadians(135));
             // rowFourDone = new Pose(-70, 72,Math.toRadians(135));
             parkPose = new Pose(54, 24, Math.toRadians(45));
